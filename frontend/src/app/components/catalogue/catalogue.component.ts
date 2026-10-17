@@ -45,12 +45,12 @@ export class CatalogueComponent implements OnInit {
   // Popular of the week (SaintStream V2 feature)
   popularList: MediaSummary[] = [];
 
-  // Hero carousel slides
+  // Hero carousel slides with authentic widescreen 1280x720/1920x1080 landscape backdrops
   heroSlides = [
     {
       id: 6,
       title: 'Dune : Deuxième Partie',
-      backdrop: '/assets/posters/6.jpg',
+      backdrop: '/assets/backdrops/6.jpg',
       tag: 'TENDANCE N°1',
       rating: '8.9',
       year: 2024,
@@ -63,7 +63,7 @@ export class CatalogueComponent implements OnInit {
     {
       id: 8,
       title: 'The Last of Us',
-      backdrop: '/assets/posters/8.jpg',
+      backdrop: '/assets/backdrops/8.jpg',
       tag: 'SÉRIE ÉVÉNEMENT',
       rating: '8.8',
       year: 2023,
@@ -76,7 +76,7 @@ export class CatalogueComponent implements OnInit {
     {
       id: 2,
       title: 'Interstellar',
-      backdrop: '/assets/posters/2.jpg',
+      backdrop: '/assets/backdrops/2.jpg',
       tag: 'CHEF-D\'ŒUVRE',
       rating: '8.7',
       year: 2014,
@@ -85,19 +85,32 @@ export class CatalogueComponent implements OnInit {
       genres: 'Science-Fiction, Drame, Aventure',
       synopsis: 'Face à l\'épuisement des ressources terrestres, une équipe d\'explorateurs utilise une faille dans l\'espace-temps pour franchir les distances interstellaires et trouver un avenir pour l\'humanité.',
       trailerUrl: 'https://www.youtube.com/watch?v=zSWdZVtXT7E'
+    },
+    {
+      id: 3,
+      title: 'The Dark Knight',
+      backdrop: '/assets/backdrops/3.jpg',
+      tag: 'CULTE',
+      rating: '9.0',
+      year: 2008,
+      age: '12+',
+      duration: '2h 32m',
+      genres: 'Action, Crime, Thriller',
+      synopsis: 'Batman, le lieutenant Gordon et Harvey Dent tentent d\'éradiquer la pègre à Gotham, mais un criminel sadique et imprévisible connu sous le nom du Joker sème l\'anarchie totale.',
+      trailerUrl: 'https://www.youtube.com/watch?v=EXeTwQWrcwY'
     }
   ];
   activeHeroIndex: number = 0;
 
-  // Studios strip (SaintStream style)
+  // Studios strip
   studios = [
-    { name: 'Netflix', badge: 'NETFLIX' },
-    { name: 'HBO Max', badge: 'HBO MAX' },
-    { name: 'Marvel Studios', badge: 'MARVEL' },
-    { name: 'Lucasfilm', badge: 'STAR WARS' },
-    { name: 'Pixar Animation', badge: 'PIXAR' },
-    { name: 'Disney+', badge: 'DISNEY+' },
-    { name: 'Warner Bros.', badge: 'WARNER BROS' }
+    { name: 'Netflix', badge: 'NETFLIX', icon: 'netflix' },
+    { name: 'HBO Max', badge: 'HBO MAX', icon: 'hbo' },
+    { name: 'Marvel Studios', badge: 'MARVEL', icon: 'marvel' },
+    { name: 'Lucasfilm', badge: 'STAR WARS', icon: 'starwars' },
+    { name: 'Pixar Animation', badge: 'PIXAR', icon: 'pixar' },
+    { name: 'Disney+', badge: 'DISNEY+', icon: 'disney' },
+    { name: 'Warner Bros.', badge: 'WARNER BROS', icon: 'wb' }
   ];
 
   // UI state
@@ -239,14 +252,75 @@ export class CatalogueComponent implements OnInit {
     this.fetchMedia();
   }
 
+  showAdvancedFilters: boolean = true;
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
+  }
+
+  selectGenre(genreId: number | null): void {
+    this.selectedGenreId = genreId;
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  getActiveGenreName(): string {
+    const g = this.genres.find(x => x.id === this.selectedGenreId);
+    return g ? g.name : '';
+  }
+
+  getActiveActorName(): string {
+    const a = this.actors.find(x => x.id === this.selectedActorId);
+    return a ? a.name : '';
+  }
+
+  getActiveDirectorName(): string {
+    const d = this.directors.find(x => x.id === this.selectedDirectorId);
+    return d ? d.name : '';
+  }
+
+  clearGenre(): void {
+    this.selectedGenreId = null;
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  clearActor(): void {
+    this.selectedActorId = null;
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  clearDirector(): void {
+    this.selectedDirectorId = null;
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  clearYear(): void {
+    this.selectedYear = null;
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  getActiveFiltersCount(): number {
+    let count = 0;
+    if (this.searchQuery) count++;
+    if (this.selectedType !== 'ALL') count++;
+    if (this.selectedGenreId) count++;
+    if (this.selectedActorId) count++;
+    if (this.selectedDirectorId) count++;
+    if (this.selectedYear) count++;
+    return count;
+  }
+
   hasActiveFilters(): boolean {
-    return !!(
-      this.searchQuery ||
-      this.selectedType !== 'ALL' ||
-      this.selectedGenreId ||
-      this.selectedActorId ||
-      this.selectedDirectorId ||
-      this.selectedYear
-    );
+    return this.getActiveFiltersCount() > 0;
   }
 }

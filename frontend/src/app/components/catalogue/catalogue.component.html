@@ -1,19 +1,23 @@
-<!-- Featured Cinematic Hero Showcase (SaintStream Style) -->
+<!-- Featured Cinematic Hero Showcase (SaintStream Style with Ultra-HD Backdrops) -->
 <section class="hero-showcase">
   <div class="hero-bg-media">
     <img 
       [src]="heroSlides[activeHeroIndex].backdrop" 
       [alt]="heroSlides[activeHeroIndex].title"
       class="hero-backdrop"
+      loading="eager"
     />
     <div class="hero-gradient-overlay"></div>
-    <div class="hero-radial-overlay"></div>
+    <div class="hero-bottom-overlay"></div>
   </div>
 
   <div class="container hero-content-wrapper">
     <div class="hero-content">
       <div class="hero-top-tags">
-        <span class="tag-trending">{{ heroSlides[activeHeroIndex].tag }}</span>
+        <span class="tag-trending">
+          <span class="dot-live"></span>
+          {{ heroSlides[activeHeroIndex].tag }}
+        </span>
         <span class="tag-tech">4K ULTRA HD</span>
         <span class="tag-tech">DOLBY ATMOS</span>
       </div>
@@ -84,26 +88,64 @@
   </div>
 </section>
 
-<!-- Studio Brands Strip (SaintStream signature bar) -->
+<!-- Studio Brands Strip (Sleek Glass Badges) -->
 <section class="studios-section">
   <div class="container">
     <div class="studios-grid">
-      <div class="studio-card" *ngFor="let s of studios">
-        <span class="studio-name">{{ s.badge }}</span>
+      <!-- Netflix -->
+      <div class="studio-card">
+        <svg class="studio-logo" viewBox="0 0 100 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.5 0H0V28H5.5V0Z" fill="#E50914"/>
+          <path d="M21 0H15.5V28H21V0Z" fill="#E50914"/>
+          <path d="M0 0H7L21 28H14L0 0Z" fill="#B81D24"/>
+          <text x="32" y="20" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="16" letter-spacing="2">NETFLIX</text>
+        </svg>
+      </div>
+
+      <!-- HBO Max -->
+      <div class="studio-card">
+        <span class="studio-text-brand">HBO <span>MAX</span></span>
+      </div>
+
+      <!-- Marvel Studios -->
+      <div class="studio-card">
+        <div class="marvel-badge">
+          <span>MARVEL</span>
+        </div>
+      </div>
+
+      <!-- Star Wars -->
+      <div class="studio-card">
+        <span class="studio-text-brand starwars-text">STAR WARS</span>
+      </div>
+
+      <!-- Pixar -->
+      <div class="studio-card">
+        <span class="studio-text-brand pixar-text">P I X A R</span>
+      </div>
+
+      <!-- Disney+ -->
+      <div class="studio-card">
+        <span class="studio-text-brand disney-text">Disney<span>+</span></span>
+      </div>
+
+      <!-- Warner Bros -->
+      <div class="studio-card">
+        <span class="studio-text-brand wb-text">WARNER BROS.</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- "Popular of the week" Ranked Section (SaintStream V2 signature) -->
+<!-- "Popular of the week" Ranked Section (SaintStream V2 Giant Stylized Ranks) -->
 <section class="popular-section" *ngIf="popularList && popularList.length > 0">
   <div class="container">
     <div class="section-header-row">
       <div class="section-title-wrap">
-        <span class="badge-section-pill">TOP DU MOMENT</span>
+        <span class="badge-section-pill">CLASSEMENT VOD</span>
         <h2 class="section-heading">Populaires de la semaine</h2>
       </div>
-      <span class="section-hint">Les œuvres les plus visionnées sur la plateforme</span>
+      <span class="section-hint">Les titres les plus loués et plébiscités par la communauté</span>
     </div>
 
     <div class="popular-ranks-grid">
@@ -111,29 +153,35 @@
         *ngFor="let item of popularList; let idx = index" 
         [routerLink]="['/media', item.id]" 
         class="popular-rank-card">
-        <div class="rank-number">0{{ idx + 1 }}</div>
-        <div class="rank-poster-wrapper">
+        
+        <!-- Big Stylized Rank Numeral -->
+        <div class="rank-number-display">{{ idx + 1 }}</div>
+
+        <!-- Landscape Backdrop Thumbnail (Clean & Sharp) -->
+        <div class="rank-thumb-wrapper">
           <img 
-            [src]="item.posterUrl || ('/assets/posters/' + item.id + '.jpg')" 
+            [src]="'/assets/backdrops/' + item.id + '.jpg'" 
             [alt]="item.title"
-            class="rank-poster-img"
+            class="rank-thumb-img"
+            loading="lazy"
           />
-          <div class="rank-play-hover">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
+          <div class="rank-overlay-glow">
+            <div class="rank-play-bubble">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
           </div>
+          <span class="rank-badge-type">{{ item.type === 'FILM' ? 'FILM' : 'SÉRIE' }}</span>
         </div>
-        <div class="rank-meta">
-          <div class="rank-sub">
-            <span class="rank-type">{{ item.type === 'FILM' ? 'FILM' : 'SÉRIE' }}</span>
-            <span class="rank-dot">•</span>
-            <span class="rank-year">{{ item.releaseYear }}</span>
-          </div>
+
+        <div class="rank-info-block">
           <h4 class="rank-title" [title]="item.title">{{ item.title }}</h4>
-          <div class="rank-price">
-            <span class="star-pill">★ 8.8</span>
-            <span class="price-pill">{{ item.rentalPricePerDay | number:'1.2-2' }} €/j</span>
+          <div class="rank-meta-row">
+            <span class="star-rating">★ 8.8</span>
+            <span class="meta-dot">•</span>
+            <span class="rank-year">{{ item.releaseYear }}</span>
+            <span class="rank-price-pill">{{ item.rentalPricePerDay | number:'1.2-2' }} €/j</span>
           </div>
         </div>
       </a>
@@ -141,27 +189,34 @@
   </div>
 </section>
 
-<!-- Filter & Search Toolbar Section -->
+<!-- Filter & Search Section (Modern SaintStream Filter System) -->
 <section class="toolbar-section">
   <div class="container">
-    <div class="toolbar-card">
-      <!-- Search Form -->
-      <form class="search-box" (ngSubmit)="onSearchSubmit()">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input 
-          type="text" 
-          [(ngModel)]="searchQuery" 
-          name="searchQuery"
-          placeholder="Rechercher par titre (ex: Inception, Breaking Bad, Batman, Interstellar...)"
-          class="search-field"
-        />
-        <button *ngIf="searchQuery" type="button" class="btn-clear-search" (click)="searchQuery = ''; onSearchSubmit()" title="Effacer la recherche">
-          ✕
-        </button>
-        <button type="submit" class="btn-search-action">
+    <div class="filter-panel">
+      <!-- Search Input Bar -->
+      <form class="search-bar-wrap" (ngSubmit)="onSearchSubmit()">
+        <div class="search-input-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            name="searchQuery"
+            placeholder="Rechercher un film, une série, un univers (ex: Inception, Breaking Bad, Batman...)"
+            class="search-input"
+          />
+          <button 
+            *ngIf="searchQuery" 
+            type="button" 
+            class="btn-clear-search" 
+            (click)="clearSearch()" 
+            title="Effacer la saisie">
+            ✕
+          </button>
+        </div>
+        <button type="submit" class="btn-search-submit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -170,81 +225,133 @@
         </button>
       </form>
 
-      <!-- Filter Controls Row -->
-      <div class="controls-row">
-        <!-- Media Type Selector Tabs -->
+      <!-- Primary Filter: Horizontal Genre Chips Bar -->
+      <div class="genres-chips-bar" *ngIf="genres && genres.length > 0">
+        <button 
+          type="button" 
+          class="genre-chip"
+          [class.active]="selectedGenreId === null"
+          (click)="selectGenre(null)">
+          Tous les genres
+        </button>
+        <button 
+          *ngFor="let g of genres" 
+          type="button" 
+          class="genre-chip"
+          [class.active]="selectedGenreId === g.id"
+          (click)="selectGenre(g.id)">
+          {{ g.name }}
+        </button>
+      </div>
+
+      <!-- Secondary Filters Bar -->
+      <div class="secondary-filters-row">
+        <!-- Media Type Selector -->
         <div class="type-segmented">
           <button 
             type="button" 
-            class="seg-item" 
+            class="seg-btn" 
             [class.active]="selectedType === 'ALL'"
             (click)="setType('ALL')">
-            Tous ({{ totalElements }})
+            Tous les formats
           </button>
           <button 
             type="button" 
-            class="seg-item" 
+            class="seg-btn" 
             [class.active]="selectedType === 'FILM'"
             (click)="setType('FILM')">
-            Films
+            Films uniquement
           </button>
           <button 
             type="button" 
-            class="seg-item" 
+            class="seg-btn" 
             [class.active]="selectedType === 'SERIE'"
             (click)="setType('SERIE')">
-            Séries
+            Séries uniquement
           </button>
         </div>
 
-        <!-- Filter Selects -->
-        <div class="selects-group">
-          <!-- Genre -->
-          <div class="select-wrapper">
-            <select [(ngModel)]="selectedGenreId" (change)="onFilterChange()">
-              <option [ngValue]="null">Genres : Tous</option>
-              <option *ngFor="let g of genres" [ngValue]="g.id">{{ g.name }}</option>
-            </select>
-          </div>
-
-          <!-- Actor -->
-          <div class="select-wrapper">
-            <select [(ngModel)]="selectedActorId" (change)="onFilterChange()">
-              <option [ngValue]="null">Acteurs : Tous</option>
-              <option *ngFor="let a of actors" [ngValue]="a.id">{{ a.name }}</option>
-            </select>
-          </div>
-
-          <!-- Director -->
-          <div class="select-wrapper">
-            <select [(ngModel)]="selectedDirectorId" (change)="onFilterChange()">
-              <option [ngValue]="null">Réalisateurs : Tous</option>
-              <option *ngFor="let d of directors" [ngValue]="d.id">{{ d.name }}</option>
-            </select>
-          </div>
-
-          <!-- Year -->
-          <div class="select-wrapper">
+        <!-- Dropdown Filters Group -->
+        <div class="dropdowns-group">
+          <!-- Year Select -->
+          <div class="custom-select-wrap">
             <select [(ngModel)]="selectedYear" (change)="onFilterChange()">
               <option [ngValue]="null">Année : Toutes</option>
               <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
             </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
           </div>
 
-          <!-- Reset Filter -->
-          <button 
-            *ngIf="hasActiveFilters()" 
-            type="button" 
-            class="btn-reset-filters" 
-            (click)="resetFilters()"
-            title="Réinitialiser tous les filtres">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-              <path d="M3 3v5h5"/>
+          <!-- Actor Select -->
+          <div class="custom-select-wrap">
+            <select [(ngModel)]="selectedActorId" (change)="onFilterChange()">
+              <option [ngValue]="null">Acteur : Tous</option>
+              <option *ngFor="let a of actors" [ngValue]="a.id">{{ a.name }}</option>
+            </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
             </svg>
-            Réinitialiser
-          </button>
+          </div>
+
+          <!-- Director Select -->
+          <div class="custom-select-wrap">
+            <select [(ngModel)]="selectedDirectorId" (change)="onFilterChange()">
+              <option [ngValue]="null">Réalisateur : Tous</option>
+              <option *ngFor="let d of directors" [ngValue]="d.id">{{ d.name }}</option>
+            </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
         </div>
+      </div>
+
+      <!-- Active Filters Removable Chips Row -->
+      <div class="active-filters-chips-row" *ngIf="hasActiveFilters()">
+        <span class="active-label">Filtres appliqués :</span>
+
+        <!-- Search term chip -->
+        <span class="active-chip" *ngIf="searchQuery">
+          Recherche: « {{ searchQuery }} »
+          <button type="button" class="chip-remove" (click)="clearSearch()">✕</button>
+        </span>
+
+        <!-- Media Type chip -->
+        <span class="active-chip" *ngIf="selectedType !== 'ALL'">
+          Format: {{ selectedType === 'FILM' ? 'Films' : 'Séries' }}
+          <button type="button" class="chip-remove" (click)="setType('ALL')">✕</button>
+        </span>
+
+        <!-- Genre chip -->
+        <span class="active-chip" *ngIf="selectedGenreId">
+          Genre: {{ getActiveGenreName() }}
+          <button type="button" class="chip-remove" (click)="clearGenre()">✕</button>
+        </span>
+
+        <!-- Year chip -->
+        <span class="active-chip" *ngIf="selectedYear">
+          Année: {{ selectedYear }}
+          <button type="button" class="chip-remove" (click)="clearYear()">✕</button>
+        </span>
+
+        <!-- Actor chip -->
+        <span class="active-chip" *ngIf="selectedActorId">
+          Acteur: {{ getActiveActorName() }}
+          <button type="button" class="chip-remove" (click)="clearActor()">✕</button>
+        </span>
+
+        <!-- Director chip -->
+        <span class="active-chip" *ngIf="selectedDirectorId">
+          Réalisateur: {{ getActiveDirectorName() }}
+          <button type="button" class="chip-remove" (click)="clearDirector()">✕</button>
+        </span>
+
+        <!-- Reset all button -->
+        <button type="button" class="btn-reset-all-chips" (click)="resetFilters()">
+          Tout réinitialiser ({{ getActiveFiltersCount() }})
+        </button>
       </div>
     </div>
   </div>
@@ -259,12 +366,9 @@
           <span *ngIf="selectedType === 'FILM'">Films Disponibles</span>
           <span *ngIf="selectedType === 'SERIE'">Séries Disponibles</span>
           <span *ngIf="selectedType === 'ALL'">Catalogue Général</span>
+          <span class="results-count-badge">{{ totalElements }} titres</span>
         </h2>
-        <p class="section-subtitle">Diffusion haute définition & 4K Ultra HD avec son multicanal</p>
-      </div>
-
-      <div class="active-criteria-badge" *ngIf="searchQuery">
-        Résultats de recherche pour : <strong>« {{ searchQuery }} »</strong>
+        <p class="section-subtitle">Streaming haute définition & 4K Ultra HD avec audio Dolby multicanal</p>
       </div>
     </div>
 

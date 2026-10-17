@@ -34,8 +34,9 @@
   <!-- Cinematic Hero Backdrop -->
   <div class="backdrop-header">
     <img 
-      [src]="media.posterUrl || ('/assets/posters/' + media.id + '.jpg')" 
+      [src]="'/assets/backdrops/' + media.id + '.jpg'" 
       [alt]="media.title"
+      (error)="onImageError($event)"
       class="backdrop-img"
     />
     <div class="backdrop-gradient"></div>
