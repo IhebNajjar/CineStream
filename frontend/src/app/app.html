@@ -1,0 +1,39 @@
+<div class="app-layout">
+  <!-- Top Navigation Bar -->
+  <app-navbar></app-navbar>
+
+  <!-- Page Route Content -->
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">Cine<span>Stream</span></div>
+        <p class="footer-slogan">Plateforme web de catalogue et de location de films et séries.</p>
+        <span class="sprint-tag">Projet d'Intégration DSI31 • Sprint 1 Livré</span>
+      </div>
+
+      <div class="footer-info">
+        <div class="sprint-status-box">
+          <h4>État du Sprint 1 (Catalogue public)</h4>
+          <ul>
+            <li>✅ <strong>US008</strong> : Liste paginée (12 titres/page)</li>
+            <li>✅ <strong>US009</strong> : Recherche de titre & gestion aucun résultat</li>
+            <li>✅ <strong>US010</strong> : Page de détails, casting & gestion 404</li>
+            <li>✅ <strong>US011</strong> : Filtres combinables (genre, type, acteur, réalisateur, année)</li>
+            <li>✅ <strong>US029</strong> : Lien bande-annonce (nouvel onglet)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; {{ currentYear }} CineStream. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+</div>

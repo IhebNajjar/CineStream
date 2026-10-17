@@ -1,0 +1,47 @@
+<nav class="pagination-container" *ngIf="totalPages > 1" aria-label="Pagination">
+  <div class="pagination-info">
+    Affichage de <strong>{{ currentPage * pageSize + 1 }}</strong> à 
+    <strong>{{ (currentPage + 1) * pageSize > totalElements ? totalElements : (currentPage + 1) * pageSize }}</strong> 
+    sur <strong>{{ totalElements }}</strong> titres
+  </div>
+
+  <div class="pagination-controls">
+    <!-- Bouton Précédent -->
+    <button 
+      class="page-btn page-arrow" 
+      [disabled]="currentPage === 0" 
+      (click)="goToPage(currentPage - 1)"
+      aria-label="Page précédente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span>Précédent</span>
+    </button>
+
+    <!-- Numéros de page -->
+    <div class="page-numbers">
+      <ng-container *ngFor="let p of getPages()">
+        <span *ngIf="p === '...'" class="page-ellipsis">…</span>
+        <button 
+          *ngIf="p !== '...'" 
+          class="page-btn page-num" 
+          [class.active]="p === currentPage"
+          (click)="goToPage(+p)">
+          {{ +p + 1 }}
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Bouton Suivant -->
+    <button 
+      class="page-btn page-arrow" 
+      [disabled]="currentPage >= totalPages - 1" 
+      (click)="goToPage(currentPage + 1)"
+      aria-label="Page suivante">
+      <span>Suivant</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</nav>
