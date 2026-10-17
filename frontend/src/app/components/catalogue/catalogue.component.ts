@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MediaService } from '../../services/media.service';
 import { Actor, Director, Genre, MediaFilter, MediaSummary, PagedResponse } from '../../models/media.model';
 import { MediaCardComponent } from '../media-card/media-card.component';
@@ -10,7 +10,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 @Component({
   selector: 'app-catalogue',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaCardComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MediaCardComponent, PaginationComponent],
   templateUrl: './catalogue.component.html',
   styleUrls: ['./catalogue.component.css']
 })
@@ -42,6 +42,64 @@ export class CatalogueComponent implements OnInit {
   // Available years for dropdown
   years: number[] = [];
 
+  // Popular of the week (SaintStream V2 feature)
+  popularList: MediaSummary[] = [];
+
+  // Hero carousel slides
+  heroSlides = [
+    {
+      id: 6,
+      title: 'Dune : Deuxième Partie',
+      backdrop: '/assets/posters/6.jpg',
+      tag: 'TENDANCE N°1',
+      rating: '8.9',
+      year: 2024,
+      age: '12+',
+      duration: '2h 46m',
+      genres: 'Science-Fiction, Aventure, Action',
+      synopsis: 'Paul Atreides s\'unit à Chani et aux Fremen pour mener la révolte contre ceux qui ont anéanti sa famille. Pris entre l\'amour de sa vie et le destin de l\'univers, il lutte pour empêcher un avenir terrifiant.',
+      trailerUrl: 'https://www.youtube.com/watch?v=Way9Dexny3w'
+    },
+    {
+      id: 8,
+      title: 'The Last of Us',
+      backdrop: '/assets/posters/8.jpg',
+      tag: 'SÉRIE ÉVÉNEMENT',
+      rating: '8.8',
+      year: 2023,
+      age: '16+',
+      duration: '1 Saison (9 Ép.)',
+      genres: 'Drame, Action, Post-Apocalyptique',
+      synopsis: 'Dans une Amérique post-apocalyptique dévastée par une infection fongique, Joel, un survivant endurci, est chargé d\'escorter la jeune Ellie hors d\'une zone de quarantaine oppressante.',
+      trailerUrl: 'https://www.youtube.com/watch?v=uLtkt8BonwM'
+    },
+    {
+      id: 2,
+      title: 'Interstellar',
+      backdrop: '/assets/posters/2.jpg',
+      tag: 'CHEF-D\'ŒUVRE',
+      rating: '8.7',
+      year: 2014,
+      age: '10+',
+      duration: '2h 49m',
+      genres: 'Science-Fiction, Drame, Aventure',
+      synopsis: 'Face à l\'épuisement des ressources terrestres, une équipe d\'explorateurs utilise une faille dans l\'espace-temps pour franchir les distances interstellaires et trouver un avenir pour l\'humanité.',
+      trailerUrl: 'https://www.youtube.com/watch?v=zSWdZVtXT7E'
+    }
+  ];
+  activeHeroIndex: number = 0;
+
+  // Studios strip (SaintStream style)
+  studios = [
+    { name: 'Netflix', badge: 'NETFLIX' },
+    { name: 'HBO Max', badge: 'HBO MAX' },
+    { name: 'Marvel Studios', badge: 'MARVEL' },
+    { name: 'Lucasfilm', badge: 'STAR WARS' },
+    { name: 'Pixar Animation', badge: 'PIXAR' },
+    { name: 'Disney+', badge: 'DISNEY+' },
+    { name: 'Warner Bros.', badge: 'WARNER BROS' }
+  ];
+
   // UI state
   isLoading: boolean = false;
   hasError: boolean = false;
@@ -50,6 +108,7 @@ export class CatalogueComponent implements OnInit {
   ngOnInit(): void {
     this.generateYearsList();
     this.loadFilterOptions();
+    this.loadPopularMedia();
 
     // Listen to query params changes (e.g. from navbar navigation)
     this.route.queryParams.subscribe(params => {
@@ -67,6 +126,27 @@ export class CatalogueComponent implements OnInit {
       }
       this.fetchMedia();
     });
+  }
+
+  loadPopularMedia(): void {
+    this.mediaService.getMediaList({ page: 0, size: 5 }).subscribe({
+      next: (res) => {
+        this.popularList = res.content.slice(0, 5);
+      },
+      error: (err) => console.error('Erreur chargement titres populaires', err)
+    });
+  }
+
+  setHeroIndex(index: number): void {
+    this.activeHeroIndex = index;
+  }
+
+  nextHero(): void {
+    this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroSlides.length;
+  }
+
+  prevHero(): void {
+    this.activeHeroIndex = (this.activeHeroIndex - 1 + this.heroSlides.length) % this.heroSlides.length;
   }
 
   generateYearsList(): void {

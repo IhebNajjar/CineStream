@@ -1,9 +1,9 @@
-<!-- Featured Cinematic Hero Showcase -->
+<!-- Featured Cinematic Hero Showcase (SaintStream Style) -->
 <section class="hero-showcase">
   <div class="hero-bg-media">
     <img 
-      src="/assets/posters/6.jpg" 
-      alt="Dune : Deuxième Partie"
+      [src]="heroSlides[activeHeroIndex].backdrop" 
+      [alt]="heroSlides[activeHeroIndex].title"
       class="hero-backdrop"
     />
     <div class="hero-gradient-overlay"></div>
@@ -13,49 +13,130 @@
   <div class="container hero-content-wrapper">
     <div class="hero-content">
       <div class="hero-top-tags">
-        <span class="tag-exclusive">À L'AFFICHE</span>
-        <span class="tag-quality">4K ULTRA HD</span>
-        <span class="tag-audio">DOLBY ATMOS</span>
+        <span class="tag-trending">{{ heroSlides[activeHeroIndex].tag }}</span>
+        <span class="tag-tech">4K ULTRA HD</span>
+        <span class="tag-tech">DOLBY ATMOS</span>
       </div>
 
-      <h1 class="hero-title">Dune : Deuxième Partie</h1>
+      <h1 class="hero-title">{{ heroSlides[activeHeroIndex].title }}</h1>
 
       <div class="hero-metadata">
-        <span class="meta-star">★ 8.9</span>
+        <span class="meta-star">★ {{ heroSlides[activeHeroIndex].rating }}</span>
         <span class="meta-sep">•</span>
-        <span>2024</span>
+        <span>{{ heroSlides[activeHeroIndex].year }}</span>
         <span class="meta-sep">•</span>
-        <span class="meta-age-pill">12+</span>
+        <span class="meta-age-pill">{{ heroSlides[activeHeroIndex].age }}</span>
         <span class="meta-sep">•</span>
-        <span>2h 46m</span>
+        <span>{{ heroSlides[activeHeroIndex].duration }}</span>
         <span class="meta-sep">•</span>
-        <span class="meta-genres">Science-Fiction, Aventure, Action</span>
+        <span class="meta-genres">{{ heroSlides[activeHeroIndex].genres }}</span>
       </div>
 
       <p class="hero-synopsis">
-        Paul Atreides s'unit à Chani et au peuple Fremen pour mener la révolte contre les conspirateurs qui ont détruit sa famille. Face à un choix déchirant entre l'amour de sa vie et le destin de l'univers, il lutte pour empêcher un avenir terrifiant.
+        {{ heroSlides[activeHeroIndex].synopsis }}
       </p>
 
       <div class="hero-actions">
         <a 
-          href="https://www.youtube.com/watch?v=Way9Dexny3w" 
+          [href]="heroSlides[activeHeroIndex].trailerUrl" 
           target="_blank" 
           rel="noopener noreferrer" 
           class="btn-hero-primary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
             <path d="M8 5v14l11-7z"/>
           </svg>
           Bande-annonce
         </a>
-        <a routerLink="/media/6" class="btn-hero-secondary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+        <a [routerLink]="['/media', heroSlides[activeHeroIndex].id]" class="btn-hero-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
             <circle cx="12" cy="12" r="10"/>
             <line x1="12" y1="16" x2="12" y2="12"/>
             <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
-          Plus d'infos
+          Détails & Fiche
         </a>
       </div>
+    </div>
+
+    <!-- Hero Carousel Pagination Dots & Nav -->
+    <div class="hero-nav-controls">
+      <button type="button" class="hero-arrow-btn" (click)="prevHero()" aria-label="Titre précédent">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <div class="hero-dots">
+        <button 
+          *ngFor="let slide of heroSlides; let idx = index"
+          type="button"
+          class="hero-dot"
+          [class.active]="idx === activeHeroIndex"
+          (click)="setHeroIndex(idx)"
+          [title]="slide.title">
+        </button>
+      </div>
+      <button type="button" class="hero-arrow-btn" (click)="nextHero()" aria-label="Titre suivant">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Studio Brands Strip (SaintStream signature bar) -->
+<section class="studios-section">
+  <div class="container">
+    <div class="studios-grid">
+      <div class="studio-card" *ngFor="let s of studios">
+        <span class="studio-name">{{ s.badge }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- "Popular of the week" Ranked Section (SaintStream V2 signature) -->
+<section class="popular-section" *ngIf="popularList && popularList.length > 0">
+  <div class="container">
+    <div class="section-header-row">
+      <div class="section-title-wrap">
+        <span class="badge-section-pill">TOP DU MOMENT</span>
+        <h2 class="section-heading">Populaires de la semaine</h2>
+      </div>
+      <span class="section-hint">Les œuvres les plus visionnées sur la plateforme</span>
+    </div>
+
+    <div class="popular-ranks-grid">
+      <a 
+        *ngFor="let item of popularList; let idx = index" 
+        [routerLink]="['/media', item.id]" 
+        class="popular-rank-card">
+        <div class="rank-number">0{{ idx + 1 }}</div>
+        <div class="rank-poster-wrapper">
+          <img 
+            [src]="item.posterUrl || ('/assets/posters/' + item.id + '.jpg')" 
+            [alt]="item.title"
+            class="rank-poster-img"
+          />
+          <div class="rank-play-hover">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="rank-meta">
+          <div class="rank-sub">
+            <span class="rank-type">{{ item.type === 'FILM' ? 'FILM' : 'SÉRIE' }}</span>
+            <span class="rank-dot">•</span>
+            <span class="rank-year">{{ item.releaseYear }}</span>
+          </div>
+          <h4 class="rank-title" [title]="item.title">{{ item.title }}</h4>
+          <div class="rank-price">
+            <span class="star-pill">★ 8.8</span>
+            <span class="price-pill">{{ item.rentalPricePerDay | number:'1.2-2' }} €/j</span>
+          </div>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -74,14 +155,18 @@
           type="text" 
           [(ngModel)]="searchQuery" 
           name="searchQuery"
-          placeholder="Rechercher par titre (ex: Inception, Breaking Bad, Batman...)"
+          placeholder="Rechercher par titre (ex: Inception, Breaking Bad, Batman, Interstellar...)"
           class="search-field"
         />
-        <button *ngIf="searchQuery" type="button" class="btn-clear-search" (click)="searchQuery = ''; onSearchSubmit()" title="Effacer">
+        <button *ngIf="searchQuery" type="button" class="btn-clear-search" (click)="searchQuery = ''; onSearchSubmit()" title="Effacer la recherche">
           ✕
         </button>
         <button type="submit" class="btn-search-action">
-          Rechercher
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Rechercher</span>
         </button>
       </form>
 
@@ -152,7 +237,7 @@
             type="button" 
             class="btn-reset-filters" 
             (click)="resetFilters()"
-            title="Réinitialiser les filtres">
+            title="Réinitialiser tous les filtres">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
               <path d="M3 3v5h5"/>
@@ -171,15 +256,15 @@
     <div class="section-top-bar">
       <div class="heading-group">
         <h2 class="section-title">
-          <span *ngIf="selectedType === 'FILM'">Tous les Films</span>
-          <span *ngIf="selectedType === 'SERIE'">Toutes les Séries</span>
-          <span *ngIf="selectedType === 'ALL'">Catalogue des Titres</span>
+          <span *ngIf="selectedType === 'FILM'">Films Disponibles</span>
+          <span *ngIf="selectedType === 'SERIE'">Séries Disponibles</span>
+          <span *ngIf="selectedType === 'ALL'">Catalogue Général</span>
         </h2>
-        <p class="section-subtitle">Disponible immédiatement en location streaming HD et 4K</p>
+        <p class="section-subtitle">Diffusion haute définition & 4K Ultra HD avec son multicanal</p>
       </div>
 
       <div class="active-criteria-badge" *ngIf="searchQuery">
-        Résultats pour : <strong>« {{ searchQuery }} »</strong>
+        Résultats de recherche pour : <strong>« {{ searchQuery }} »</strong>
       </div>
     </div>
 
@@ -205,12 +290,12 @@
     <!-- Empty State -->
     <div *ngIf="!isLoading && !hasError && mediaList.length === 0" class="empty-results-box">
       <div class="empty-search-icon">🎬</div>
-      <h3 class="empty-header">Aucun titre ne correspond à votre sélection</h3>
+      <h3 class="empty-header">Aucun titre ne correspond à vos filtres</h3>
       <p class="empty-suggestion">
-        Essayez de modifier vos critères de filtrage ou de vérifier l'orthographe de votre recherche.
+        Essayez d'ajuster vos critères de recherche ou de naviguer par catégorie.
       </p>
       <button class="btn-clear-all" (click)="resetFilters()">
-        Voir tout le catalogue
+        Réinitialiser et voir tout le catalogue
       </button>
     </div>
 

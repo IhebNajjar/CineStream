@@ -71,8 +71,9 @@
 .page-num.active {
   background: var(--primary);
   border-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px var(--primary-glow);
+  color: var(--primary-text);
+  font-weight: 800;
+  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 .page-ellipsis {

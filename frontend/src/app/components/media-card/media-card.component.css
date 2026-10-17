@@ -1,8 +1,8 @@
 .media-card {
   display: flex;
   flex-direction: column;
-  background: #14161f;
-  border-radius: 14px;
+  background: #11131a;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -14,8 +14,8 @@
 
 .media-card:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: rgba(229, 9, 20, 0.5);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7), 0 0 24px rgba(229, 9, 20, 0.2);
+  border-color: rgba(0, 220, 130, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 220, 130, 0.22);
 }
 
 .poster-wrapper {
@@ -23,7 +23,7 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   overflow: hidden;
-  background-color: #0b0c10;
+  background-color: #08090d;
 }
 
 .poster-img {
@@ -40,7 +40,7 @@
 .card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 11, 15, 0.95) 0%, rgba(10, 11, 15, 0.4) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(8, 9, 13, 0.95) 0%, rgba(8, 9, 13, 0.4) 50%, transparent 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,12 +59,12 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #e50914;
-  color: white;
+  background: #00dc82;
+  color: #08090d;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(229, 9, 20, 0.7);
+  box-shadow: 0 0 22px rgba(0, 220, 130, 0.7);
   transform: scale(0.8);
   transition: transform 0.25s ease;
 }
@@ -75,7 +75,7 @@
 
 .overlay-label {
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -93,11 +93,11 @@
 }
 
 .badge-tech {
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(8, 9, 13, 0.75);
   backdrop-filter: blur(8px);
-  color: #00d2d3;
+  color: #00dc82;
   font-weight: 800;
-  border: 1px solid rgba(0, 210, 211, 0.3);
+  border: 1px solid rgba(0, 220, 130, 0.3);
 }
 
 .badges-bottom {
@@ -115,7 +115,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(10, 11, 15, 0.85);
+  background: rgba(8, 9, 13, 0.85);
   backdrop-filter: blur(8px);
   padding: 3px 8px;
   border-radius: 6px;
@@ -134,9 +134,9 @@
 }
 
 .rental-badge {
-  background: rgba(10, 11, 15, 0.9);
+  background: rgba(8, 9, 13, 0.9);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(245, 197, 24, 0.3);
+  border: 1px solid rgba(0, 220, 130, 0.35);
   padding: 3px 9px;
   border-radius: 6px;
   display: flex;
@@ -145,13 +145,13 @@
 }
 
 .price-val {
-  color: #f5c518;
+  color: #00dc82;
   font-weight: 800;
   font-size: 0.85rem;
 }
 
 .price-period {
-  color: #8c93a8;
+  color: #949db0;
   font-size: 0.7rem;
 }
 
@@ -188,6 +188,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.2px;
+  transition: color 0.2s ease;
+}
+
+.media-card:hover .card-title {
+  color: #00dc82;
 }
 
 .genres-row {

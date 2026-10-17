@@ -16,6 +16,7 @@ export class MediaDetailsComponent implements OnInit {
   private mediaService = inject(MediaService);
 
   media: MediaDetails | null = null;
+  similarTitles: any[] = [];
   isLoading: boolean = true;
   notFound: boolean = false;
   errorMessage: string = '';
@@ -30,6 +31,7 @@ export class MediaDetailsComponent implements OnInit {
           this.isLoading = false;
         } else {
           this.loadDetails(id);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       }
     });
@@ -39,11 +41,15 @@ export class MediaDetailsComponent implements OnInit {
     this.isLoading = true;
     this.notFound = false;
     this.errorMessage = '';
+    this.similarTitles = [];
 
     this.mediaService.getMediaDetails(id).subscribe({
       next: (data) => {
         this.media = data;
         this.isLoading = false;
+        if (data.genres && data.genres.length > 0) {
+          this.loadSimilar(data.genres[0].id, id);
+        }
       },
       error: (err) => {
         this.isLoading = false;
@@ -53,6 +59,15 @@ export class MediaDetailsComponent implements OnInit {
           this.errorMessage = 'Une erreur est survenue lors du chargement des détails.';
         }
       }
+    });
+  }
+
+  loadSimilar(genreId: number, currentId: number): void {
+    this.mediaService.getMediaList({ genre: genreId, size: 6 }).subscribe({
+      next: (res) => {
+        this.similarTitles = res.content.filter(item => item.id !== currentId).slice(0, 4);
+      },
+      error: (err) => console.error('Erreur chargement similaires', err)
     });
   }
 

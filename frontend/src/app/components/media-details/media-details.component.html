@@ -65,7 +65,7 @@
           <div class="poster-quality-badge">4K ULTRA HD</div>
         </div>
 
-        <!-- Rental Action Box -->
+        <!-- Rental Action Box (SaintStream Emerald style) -->
         <div class="rental-box">
           <div class="rental-price-row">
             <span class="label">Tarif de location</span>
@@ -83,9 +83,9 @@
           </button>
           
           <div class="rental-guarantees">
-            <span>✓ Streaming illimité pendant la durée</span>
+            <span>✓ Streaming illimité pendant la location</span>
             <span>✓ Qualité 4K HDR & Dolby Atmos</span>
-            <span>✓ Disponible sur tous vos écrans</span>
+            <span>✓ Compatible TV, mobile, PC & tablette</span>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
             target="_blank" 
             rel="noopener noreferrer" 
             class="btn-trailer">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" class="trailer-play-icon">
               <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
             </svg>
             <span>Bande-annonce officielle</span>
@@ -141,13 +141,19 @@
 
         <!-- Synopsis -->
         <div class="section-block">
-          <h2 class="block-title">Synopsis</h2>
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Synopsis & Histoire
+          </h2>
           <p class="synopsis-text">{{ media.description }}</p>
         </div>
 
         <!-- Real Directors -->
         <div class="section-block" *ngIf="media.directors && media.directors.length > 0">
-          <h2 class="block-title">Réalisation</h2>
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Réalisation
+          </h2>
           <div class="directors-grid">
             <div *ngFor="let d of media.directors" class="person-card">
               <img 
@@ -164,9 +170,12 @@
           </div>
         </div>
 
-        <!-- Real Cast with Character Roles -->
+        <!-- Real Cast with Character Roles (SaintStream Style Avatars) -->
         <div class="section-block" *ngIf="media.actors && media.actors.length > 0">
-          <h2 class="block-title">Distribution & Rôles</h2>
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Distribution Principale
+          </h2>
           <div class="cast-grid">
             <div *ngFor="let a of media.actors" class="cast-card">
               <img 
@@ -176,7 +185,7 @@
               />
               <div class="cast-info">
                 <span class="actor-name">{{ a.name }}</span>
-                <span class="char-role">Rôle : <strong>{{ a.characterName }}</strong></span>
+                <span class="char-role">{{ a.characterName }}</span>
               </div>
             </div>
           </div>
@@ -184,7 +193,10 @@
 
         <!-- Audio & Video Technical Specs -->
         <div class="section-block specs-block">
-          <h2 class="block-title">Caractéristiques Techniques</h2>
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Spécifications Techniques
+          </h2>
           <div class="specs-grid">
             <div class="spec-item">
               <span class="spec-label">Résolution</span>
@@ -202,6 +214,34 @@
               <span class="spec-label">Disponibilité</span>
               <span class="spec-val">Immédiate</span>
             </div>
+          </div>
+        </div>
+
+        <!-- Similar Recommended Titles (SaintStream V2 Feature) -->
+        <div class="section-block" *ngIf="similarTitles && similarTitles.length > 0">
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Titres Similaires Recommandés
+          </h2>
+          <div class="similar-grid">
+            <a 
+              *ngFor="let sim of similarTitles" 
+              [routerLink]="['/media', sim.id]" 
+              class="similar-card">
+              <div class="similar-poster">
+                <img 
+                  [src]="sim.posterUrl || ('/assets/posters/' + sim.id + '.jpg')" 
+                  [alt]="sim.title"
+                />
+              </div>
+              <div class="similar-info">
+                <span class="similar-title" [title]="sim.title">{{ sim.title }}</span>
+                <div class="similar-meta">
+                  <span>{{ sim.releaseYear }}</span>
+                  <span class="similar-price">{{ sim.rentalPricePerDay | number:'1.2-2' }} €</span>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>
