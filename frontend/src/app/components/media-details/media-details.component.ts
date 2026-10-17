@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MediaService } from '../../services/media.service';
@@ -14,6 +14,7 @@ import { MediaDetails } from '../../models/media.model';
 export class MediaDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private mediaService = inject(MediaService);
+  private cdr = inject(ChangeDetectorRef);
 
   media: MediaDetails | null = null;
   similarTitles: any[] = [];
@@ -47,6 +48,7 @@ export class MediaDetailsComponent implements OnInit {
       next: (data) => {
         this.media = data;
         this.isLoading = false;
+        this.cdr.markForCheck();
         if (data.genres && data.genres.length > 0) {
           this.loadSimilar(data.genres[0].id, id);
         }
@@ -58,6 +60,7 @@ export class MediaDetailsComponent implements OnInit {
         } else {
           this.errorMessage = 'Une erreur est survenue lors du chargement des détails.';
         }
+        this.cdr.markForCheck();
       }
     });
   }
@@ -66,6 +69,7 @@ export class MediaDetailsComponent implements OnInit {
     this.mediaService.getMediaList({ genre: genreId, size: 6 }).subscribe({
       next: (res) => {
         this.similarTitles = res.content.filter(item => item.id !== currentId).slice(0, 4);
+        this.cdr.markForCheck();
       },
       error: (err) => console.error('Erreur chargement similaires', err)
     });

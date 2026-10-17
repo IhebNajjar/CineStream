@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -18,6 +18,7 @@ export class CatalogueComponent implements OnInit {
   private mediaService = inject(MediaService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   // Data
   mediaList: MediaSummary[] = [];
@@ -119,12 +120,14 @@ export class CatalogueComponent implements OnInit {
   errorMessage: string = '';
 
   ngOnInit(): void {
+    console.log('[CatalogueComponent] ngOnInit running');
     this.generateYearsList();
     this.loadFilterOptions();
     this.loadPopularMedia();
 
     // Listen to query params changes (e.g. from navbar navigation)
     this.route.queryParams.subscribe(params => {
+      console.log('[CatalogueComponent] queryParams received:', params);
       if (params['type']) {
         this.selectedType = params['type'];
       }
@@ -145,6 +148,7 @@ export class CatalogueComponent implements OnInit {
     this.mediaService.getMediaList({ page: 0, size: 5 }).subscribe({
       next: (res) => {
         this.popularList = res.content.slice(0, 5);
+        this.cdr.markForCheck();
       },
       error: (err) => console.error('Erreur chargement titres populaires', err)
     });
@@ -152,14 +156,17 @@ export class CatalogueComponent implements OnInit {
 
   setHeroIndex(index: number): void {
     this.activeHeroIndex = index;
+    this.cdr.markForCheck();
   }
 
   nextHero(): void {
     this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroSlides.length;
+    this.cdr.markForCheck();
   }
 
   prevHero(): void {
     this.activeHeroIndex = (this.activeHeroIndex - 1 + this.heroSlides.length) % this.heroSlides.length;
+    this.cdr.markForCheck();
   }
 
   generateYearsList(): void {
@@ -171,17 +178,26 @@ export class CatalogueComponent implements OnInit {
 
   loadFilterOptions(): void {
     this.mediaService.getGenres().subscribe({
-      next: (data) => this.genres = data,
+      next: (data) => {
+        this.genres = data;
+        this.cdr.markForCheck();
+      },
       error: (err) => console.error('Erreur chargement genres', err)
     });
 
     this.mediaService.getActors().subscribe({
-      next: (data) => this.actors = data,
+      next: (data) => {
+        this.actors = data;
+        this.cdr.markForCheck();
+      },
       error: (err) => console.error('Erreur chargement acteurs', err)
     });
 
     this.mediaService.getDirectors().subscribe({
-      next: (data) => this.directors = data,
+      next: (data) => {
+        this.directors = data;
+        this.cdr.markForCheck();
+      },
       error: (err) => console.error('Erreur chargement réalisateurs', err)
     });
   }
@@ -189,6 +205,7 @@ export class CatalogueComponent implements OnInit {
   fetchMedia(): void {
     this.isLoading = true;
     this.hasError = false;
+    this.cdr.markForCheck();
 
     const filters: MediaFilter = {
       q: this.searchQuery,
@@ -201,19 +218,23 @@ export class CatalogueComponent implements OnInit {
       size: this.pageSize
     };
 
+    console.log('[CatalogueComponent] fetchMedia calling API with filters:', filters);
     this.mediaService.getMediaList(filters).subscribe({
       next: (response: PagedResponse<MediaSummary>) => {
+        console.log('[CatalogueComponent] fetchMedia SUCCESS, received elements:', response.totalElements);
         this.mediaList = response.content;
         this.currentPage = response.page;
         this.totalPages = response.totalPages;
         this.totalElements = response.totalElements;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
-        console.error('Erreur chargement catalogue', err);
+        console.error('[CatalogueComponent] fetchMedia ERROR:', err);
         this.isLoading = false;
         this.hasError = true;
         this.errorMessage = 'Impossible de charger le catalogue. Veuillez vérifier que le serveur backend est en ligne.';
+        this.cdr.markForCheck();
       }
     });
   }

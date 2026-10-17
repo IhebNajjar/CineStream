@@ -9,11 +9,16 @@ backend/pom.xml.next
 backend/release.properties
 
 # Node & Angular
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
 frontend/.editorconfig
 frontend/.vscode/
+
+# Python
+__pycache__/
+*.pyc
 
 # IDE & OS
 .idea/
