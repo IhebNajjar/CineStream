@@ -2,37 +2,78 @@
   <!-- Top Navigation Bar -->
   <app-navbar></app-navbar>
 
-  <!-- Page Route Content -->
+  <!-- Main View Route -->
   <main class="app-main">
     <router-outlet></router-outlet>
   </main>
 
-  <!-- Global Footer -->
+  <!-- Global Streaming Platform Footer -->
   <footer class="app-footer">
-    <div class="container footer-content">
-      <div class="footer-brand">
-        <div class="footer-logo">Cine<span>Stream</span></div>
-        <p class="footer-slogan">Plateforme web de catalogue et de location de films et séries.</p>
-        <span class="sprint-tag">Projet d'Intégration DSI31 • Sprint 1 Livré</span>
-      </div>
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand & Description -->
+        <div class="footer-col brand-col">
+          <div class="footer-logo">
+            <span class="logo-mark-sm">▶</span>
+            CINE<span>STREAM</span>
+          </div>
+          <p class="brand-text">
+            Votre destination cinéma et séries en vidéo à la demande haute définition. Découvrez notre catalogue exclusif, louez vos œuvres favorites et profitez d'une expérience audiovisuelle immersive.
+          </p>
+          <div class="quality-badges-row">
+            <span class="pill-badge">4K HDR</span>
+            <span class="pill-badge">DOLBY VISION</span>
+            <span class="pill-badge">ATMOS</span>
+          </div>
+        </div>
 
-      <div class="footer-info">
-        <div class="sprint-status-box">
-          <h4>État du Sprint 1 (Catalogue public)</h4>
-          <ul>
-            <li>✅ <strong>US008</strong> : Liste paginée (12 titres/page)</li>
-            <li>✅ <strong>US009</strong> : Recherche de titre & gestion aucun résultat</li>
-            <li>✅ <strong>US010</strong> : Page de détails, casting & gestion 404</li>
-            <li>✅ <strong>US011</strong> : Filtres combinables (genre, type, acteur, réalisateur, année)</li>
-            <li>✅ <strong>US029</strong> : Lien bande-annonce (nouvel onglet)</li>
+        <!-- Links Column 1: Navigation -->
+        <div class="footer-col">
+          <h4 class="col-title">Navigation</h4>
+          <ul class="col-links">
+            <li><a routerLink="/">Accueil Catalogue</a></li>
+            <li><a routerLink="/" [queryParams]="{type: 'FILM'}">Films Récents</a></li>
+            <li><a routerLink="/" [queryParams]="{type: 'SERIE'}">Séries Populaires</a></li>
+            <li><a routerLink="/" [queryParams]="{genre: 1}">Cinéma d'Action</a></li>
+            <li><a routerLink="/" [queryParams]="{genre: 2}">Science-Fiction</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Column 2: Assistance -->
+        <div class="footer-col">
+          <h4 class="col-title">Assistance & VOD</h4>
+          <ul class="col-links">
+            <li><a href="javascript:void(0)" onclick="alert('Centre d\'aide CineStream disponible 7j/7.')">Centre d'aide</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Configuration requise : Connexion haut-débit recommandée pour le streaming 4K.')">Appareils compatibles</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Location active pendant la durée choisie avec reprise automatique de lecture.')">Conditions de location</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Contact support : assistance@cinestream.com')">Nous contacter</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Column 3: Légal -->
+        <div class="footer-col">
+          <h4 class="col-title">Informations Légales</h4>
+          <ul class="col-links">
+            <li><a href="javascript:void(0)">Conditions Générales d'Utilisation</a></li>
+            <li><a href="javascript:void(0)">Politique de Confidentialité</a></li>
+            <li><a href="javascript:void(0)">Gestion des Cookies</a></li>
+            <li><a href="javascript:void(0)">Mentions Légales</a></li>
           </ul>
         </div>
       </div>
-    </div>
 
-    <div class="footer-bottom">
-      <div class="container">
-        <p>&copy; {{ currentYear }} CineStream. Tous droits réservés.</p>
+      <!-- Bottom Bar -->
+      <div class="footer-bottom-bar">
+        <p class="copyright">
+          &copy; {{ currentYear }} CineStream Inc. Tous droits réservés. Service de location et streaming vidéo accessible en ligne.
+        </p>
+        <div class="device-tags">
+          <span>Téléviseurs Connectés</span>
+          <span>•</span>
+          <span>Ordinateurs</span>
+          <span>•</span>
+          <span>Tablettes & Smartphones</span>
+        </div>
       </div>
     </div>
   </footer>

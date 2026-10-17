@@ -57,15 +57,19 @@ export class MediaDetailsComponent implements OnInit {
   }
 
   formatDuration(duration?: number): string {
-    if (!duration) return 'Non communiquée';
+    if (!duration) return 'Format Série';
     const hours = Math.floor(duration / 60);
     const minutes = duration % 60;
-    if (hours === 0) return `${minutes} minutes`;
-    return `${hours}h ${minutes.toString().padStart(2, '0')}m (${duration} min)`;
+    if (hours === 0) return `${minutes} min`;
+    return `${hours}h ${minutes.toString().padStart(2, '0')}m`;
   }
 
   onImageError(event: Event) {
     const target = event.target as HTMLImageElement;
     target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600';
+  }
+
+  onRentClick(): void {
+    alert('Veuillez vous connecter à votre compte CineStream pour procéder à la location.');
   }
 }
