@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { MediaService } from '../../services/media.service';
 import { Actor, Director, Genre, MediaFilter, MediaSummary, PagedResponse } from '../../models/media.model';
 import { MediaCardComponent } from '../media-card/media-card.component';
@@ -20,21 +21,28 @@ export class CatalogueComponent implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
+  // Page mode & metadata
+  pageMode: 'films' | 'series' | 'catalogue' = 'films';
+  pageTitle: string = 'Films';
+  pageBadge: string = 'COLLECTION FILMS';
+  pageSubtitle: string = 'Découvrez notre collection de longs-métrages en streaming haute définition et 4K Ultra HD.';
+  searchPlaceholder: string = 'Rechercher un film par titre... (ex: Inception, Dune, Oppenheimer)';
+
   // Data
   mediaList: MediaSummary[] = [];
   genres: Genre[] = [];
   actors: Actor[] = [];
   directors: Director[] = [];
 
-  // Pagination state
+  // Pagination state (US008: 12 per page)
   currentPage: number = 0;
   totalPages: number = 0;
   totalElements: number = 0;
   pageSize: number = 12;
 
-  // Filter model
+  // Filter model (US009, US011)
   searchQuery: string = '';
-  selectedType: string = 'ALL';
+  selectedType: string = 'FILM';
   selectedGenreId: number | null = null;
   selectedActorId: number | null = null;
   selectedDirectorId: number | null = null;
@@ -43,130 +51,76 @@ export class CatalogueComponent implements OnInit {
   // Available years for dropdown
   years: number[] = [];
 
-  // Popular of the week (SaintStream V2 feature)
-  popularList: MediaSummary[] = [];
-
-  // Hero carousel slides with authentic widescreen 1280x720/1920x1080 landscape backdrops
-  heroSlides = [
-    {
-      id: 6,
-      title: 'Dune : Deuxième Partie',
-      backdrop: '/assets/backdrops/6.jpg',
-      tag: 'TENDANCE N°1',
-      rating: '8.9',
-      year: 2024,
-      age: '12+',
-      duration: '2h 46m',
-      genres: 'Science-Fiction, Aventure, Action',
-      synopsis: 'Paul Atreides s\'unit à Chani et aux Fremen pour mener la révolte contre ceux qui ont anéanti sa famille. Pris entre l\'amour de sa vie et le destin de l\'univers, il lutte pour empêcher un avenir terrifiant.',
-      trailerUrl: 'https://www.youtube.com/watch?v=Way9Dexny3w'
-    },
-    {
-      id: 8,
-      title: 'The Last of Us',
-      backdrop: '/assets/backdrops/8.jpg',
-      tag: 'SÉRIE ÉVÉNEMENT',
-      rating: '8.8',
-      year: 2023,
-      age: '16+',
-      duration: '1 Saison (9 Ép.)',
-      genres: 'Drame, Action, Post-Apocalyptique',
-      synopsis: 'Dans une Amérique post-apocalyptique dévastée par une infection fongique, Joel, un survivant endurci, est chargé d\'escorter la jeune Ellie hors d\'une zone de quarantaine oppressante.',
-      trailerUrl: 'https://www.youtube.com/watch?v=uLtkt8BonwM'
-    },
-    {
-      id: 2,
-      title: 'Interstellar',
-      backdrop: '/assets/backdrops/2.jpg',
-      tag: 'CHEF-D\'ŒUVRE',
-      rating: '8.7',
-      year: 2014,
-      age: '10+',
-      duration: '2h 49m',
-      genres: 'Science-Fiction, Drame, Aventure',
-      synopsis: 'Face à l\'épuisement des ressources terrestres, une équipe d\'explorateurs utilise une faille dans l\'espace-temps pour franchir les distances interstellaires et trouver un avenir pour l\'humanité.',
-      trailerUrl: 'https://www.youtube.com/watch?v=zSWdZVtXT7E'
-    },
-    {
-      id: 3,
-      title: 'The Dark Knight',
-      backdrop: '/assets/backdrops/3.jpg',
-      tag: 'CULTE',
-      rating: '9.0',
-      year: 2008,
-      age: '12+',
-      duration: '2h 32m',
-      genres: 'Action, Crime, Thriller',
-      synopsis: 'Batman, le lieutenant Gordon et Harvey Dent tentent d\'éradiquer la pègre à Gotham, mais un criminel sadique et imprévisible connu sous le nom du Joker sème l\'anarchie totale.',
-      trailerUrl: 'https://www.youtube.com/watch?v=EXeTwQWrcwY'
-    }
-  ];
-  activeHeroIndex: number = 0;
-
-  // Studios strip
-  studios = [
-    { name: 'Netflix', badge: 'NETFLIX', icon: 'netflix' },
-    { name: 'HBO Max', badge: 'HBO MAX', icon: 'hbo' },
-    { name: 'Marvel Studios', badge: 'MARVEL', icon: 'marvel' },
-    { name: 'Lucasfilm', badge: 'STAR WARS', icon: 'starwars' },
-    { name: 'Pixar Animation', badge: 'PIXAR', icon: 'pixar' },
-    { name: 'Disney+', badge: 'DISNEY+', icon: 'disney' },
-    { name: 'Warner Bros.', badge: 'WARNER BROS', icon: 'wb' }
-  ];
-
   // UI state
   isLoading: boolean = false;
   hasError: boolean = false;
   errorMessage: string = '';
 
   ngOnInit(): void {
-    console.log('[CatalogueComponent] ngOnInit running');
     this.generateYearsList();
     this.loadFilterOptions();
-    this.loadPopularMedia();
+    this.detectPageMode();
 
-    // Listen to query params changes (e.g. from navbar navigation)
+    // Re-detect mode on navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.detectPageMode();
+      this.fetchMedia();
+    });
+
+    // Listen to query params changes
     this.route.queryParams.subscribe(params => {
-      console.log('[CatalogueComponent] queryParams received:', params);
-      if (params['type']) {
-        this.selectedType = params['type'];
-      }
-      if (params['q']) {
+      if (params['q'] !== undefined) {
         this.searchQuery = params['q'];
       }
-      if (params['genre']) {
+      if (params['genre'] !== undefined) {
         this.selectedGenreId = Number(params['genre']) || null;
       }
-      if (params['page']) {
+      if (params['actor'] !== undefined) {
+        this.selectedActorId = Number(params['actor']) || null;
+      }
+      if (params['director'] !== undefined) {
+        this.selectedDirectorId = Number(params['director']) || null;
+      }
+      if (params['year'] !== undefined) {
+        this.selectedYear = Number(params['year']) || null;
+      }
+      if (params['page'] !== undefined) {
         this.currentPage = Number(params['page']) || 0;
+      }
+      if (params['type'] !== undefined && this.pageMode === 'catalogue') {
+        this.selectedType = params['type'];
       }
       this.fetchMedia();
     });
   }
 
-  loadPopularMedia(): void {
-    this.mediaService.getMediaList({ page: 0, size: 5 }).subscribe({
-      next: (res) => {
-        this.popularList = res.content.slice(0, 5);
-        this.cdr.markForCheck();
-      },
-      error: (err) => console.error('Erreur chargement titres populaires', err)
-    });
-  }
-
-  setHeroIndex(index: number): void {
-    this.activeHeroIndex = index;
-    this.cdr.markForCheck();
-  }
-
-  nextHero(): void {
-    this.activeHeroIndex = (this.activeHeroIndex + 1) % this.heroSlides.length;
-    this.cdr.markForCheck();
-  }
-
-  prevHero(): void {
-    this.activeHeroIndex = (this.activeHeroIndex - 1 + this.heroSlides.length) % this.heroSlides.length;
-    this.cdr.markForCheck();
+  detectPageMode(): void {
+    const url = this.router.url;
+    if (url.includes('/series')) {
+      this.pageMode = 'series';
+      this.selectedType = 'SERIE';
+      this.pageTitle = 'Toutes les Séries';
+      this.pageBadge = 'COLLECTION SÉRIES';
+      this.pageSubtitle = 'Explorez nos séries complètes et saisons intégrales en streaming haute définition.';
+      this.searchPlaceholder = 'Rechercher une série par titre... (ex: Breaking Bad, Stranger Things, The Last of Us)';
+    } else if (url.includes('/catalogue')) {
+      this.pageMode = 'catalogue';
+      this.selectedType = 'ALL';
+      this.pageTitle = 'Catalogue Général';
+      this.pageBadge = 'CATALOGUE GÉNÉRAL';
+      this.pageSubtitle = 'Découvrez l\'ensemble des films et séries disponibles à la location sur CineStream.';
+      this.searchPlaceholder = 'Rechercher un film ou une série par titre...';
+    } else {
+      // Default to Films
+      this.pageMode = 'films';
+      this.selectedType = 'FILM';
+      this.pageTitle = 'Tous les Films';
+      this.pageBadge = 'COLLECTION FILMS';
+      this.pageSubtitle = 'Découvrez notre collection de longs-métrages en streaming haute définition et 4K Ultra HD.';
+      this.searchPlaceholder = 'Rechercher un film par titre... (ex: Inception, Dune, Oppenheimer, The Dark Knight)';
+    }
   }
 
   generateYearsList(): void {
@@ -208,21 +162,19 @@ export class CatalogueComponent implements OnInit {
     this.cdr.markForCheck();
 
     const filters: MediaFilter = {
-      q: this.searchQuery,
+      q: this.searchQuery.trim() || undefined,
       type: this.selectedType,
-      genre: this.selectedGenreId,
-      actor: this.selectedActorId,
-      director: this.selectedDirectorId,
-      year: this.selectedYear,
+      genre: this.selectedGenreId || undefined,
+      actor: this.selectedActorId || undefined,
+      director: this.selectedDirectorId || undefined,
+      year: this.selectedYear || undefined,
       page: this.currentPage,
       size: this.pageSize
     };
 
-    console.log('[CatalogueComponent] fetchMedia calling API with filters:', filters);
     this.mediaService.getMediaList(filters).subscribe({
       next: (response: PagedResponse<MediaSummary>) => {
-        console.log('[CatalogueComponent] fetchMedia SUCCESS, received elements:', response.totalElements);
-        this.mediaList = response.content;
+        this.mediaList = response.content || [];
         this.currentPage = response.page;
         this.totalPages = response.totalPages;
         this.totalElements = response.totalElements;
@@ -258,25 +210,7 @@ export class CatalogueComponent implements OnInit {
   onPageChange(page: number): void {
     this.currentPage = page;
     this.fetchMedia();
-    window.scrollTo({ top: 380, behavior: 'smooth' });
-  }
-
-  resetFilters(): void {
-    this.searchQuery = '';
-    this.selectedType = 'ALL';
-    this.selectedGenreId = null;
-    this.selectedActorId = null;
-    this.selectedDirectorId = null;
-    this.selectedYear = null;
-    this.currentPage = 0;
-    this.router.navigate(['/']);
-    this.fetchMedia();
-  }
-
-  showAdvancedFilters: boolean = true;
-
-  toggleAdvancedFilters(): void {
-    this.showAdvancedFilters = !this.showAdvancedFilters;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   selectGenre(genreId: number | null): void {
@@ -285,19 +219,10 @@ export class CatalogueComponent implements OnInit {
     this.fetchMedia();
   }
 
-  getActiveGenreName(): string {
-    const g = this.genres.find(x => x.id === this.selectedGenreId);
-    return g ? g.name : '';
-  }
-
-  getActiveActorName(): string {
-    const a = this.actors.find(x => x.id === this.selectedActorId);
-    return a ? a.name : '';
-  }
-
-  getActiveDirectorName(): string {
-    const d = this.directors.find(x => x.id === this.selectedDirectorId);
-    return d ? d.name : '';
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.currentPage = 0;
+    this.fetchMedia();
   }
 
   clearGenre(): void {
@@ -324,16 +249,38 @@ export class CatalogueComponent implements OnInit {
     this.fetchMedia();
   }
 
-  clearSearch(): void {
+  resetFilters(): void {
     this.searchQuery = '';
+    this.selectedGenreId = null;
+    this.selectedActorId = null;
+    this.selectedDirectorId = null;
+    this.selectedYear = null;
     this.currentPage = 0;
+    if (this.pageMode === 'catalogue') {
+      this.selectedType = 'ALL';
+    }
     this.fetchMedia();
+  }
+
+  getActiveGenreName(): string {
+    const g = this.genres.find(x => x.id === this.selectedGenreId);
+    return g ? g.name : '';
+  }
+
+  getActiveActorName(): string {
+    const a = this.actors.find(x => x.id === this.selectedActorId);
+    return a ? a.name : '';
+  }
+
+  getActiveDirectorName(): string {
+    const d = this.directors.find(x => x.id === this.selectedDirectorId);
+    return d ? d.name : '';
   }
 
   getActiveFiltersCount(): number {
     let count = 0;
-    if (this.searchQuery) count++;
-    if (this.selectedType !== 'ALL') count++;
+    if (this.searchQuery.trim()) count++;
+    if (this.pageMode === 'catalogue' && this.selectedType !== 'ALL') count++;
     if (this.selectedGenreId) count++;
     if (this.selectedActorId) count++;
     if (this.selectedDirectorId) count++;

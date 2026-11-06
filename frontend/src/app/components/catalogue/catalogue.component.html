@@ -1,421 +1,298 @@
-<!-- Featured Cinematic Hero Showcase (SaintStream Style with Ultra-HD Backdrops) -->
-<section class="hero-showcase">
-  <div class="hero-bg-media">
-    <img 
-      [src]="heroSlides[activeHeroIndex].backdrop" 
-      [alt]="heroSlides[activeHeroIndex].title"
-      class="hero-backdrop"
-      loading="eager"
-    />
-    <div class="hero-gradient-overlay"></div>
-    <div class="hero-bottom-overlay"></div>
-  </div>
+<div class="catalogue-page">
+  <!-- 1. Top Page Header -->
+  <header class="page-hero-header">
+    <div class="container">
+      <nav class="breadcrumb-nav" aria-label="Fil d'Ariane">
+        <a routerLink="/" class="breadcrumb-link">Accueil</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current">{{ pageTitle }}</span>
+      </nav>
 
-  <div class="container hero-content-wrapper">
-    <div class="hero-content">
-      <div class="hero-top-tags">
-        <span class="tag-trending">
-          <span class="dot-live"></span>
-          {{ heroSlides[activeHeroIndex].tag }}
-        </span>
-        <span class="tag-tech">4K ULTRA HD</span>
-        <span class="tag-tech">DOLBY ATMOS</span>
-      </div>
-
-      <h1 class="hero-title">{{ heroSlides[activeHeroIndex].title }}</h1>
-
-      <div class="hero-metadata">
-        <span class="meta-star">★ {{ heroSlides[activeHeroIndex].rating }}</span>
-        <span class="meta-sep">•</span>
-        <span>{{ heroSlides[activeHeroIndex].year }}</span>
-        <span class="meta-sep">•</span>
-        <span class="meta-age-pill">{{ heroSlides[activeHeroIndex].age }}</span>
-        <span class="meta-sep">•</span>
-        <span>{{ heroSlides[activeHeroIndex].duration }}</span>
-        <span class="meta-sep">•</span>
-        <span class="meta-genres">{{ heroSlides[activeHeroIndex].genres }}</span>
-      </div>
-
-      <p class="hero-synopsis">
-        {{ heroSlides[activeHeroIndex].synopsis }}
-      </p>
-
-      <div class="hero-actions">
-        <a 
-          [href]="heroSlides[activeHeroIndex].trailerUrl" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="btn-hero-primary">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-          Bande-annonce
-        </a>
-        <a [routerLink]="['/media', heroSlides[activeHeroIndex].id]" class="btn-hero-secondary">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
-          </svg>
-          Détails & Fiche
-        </a>
-      </div>
-    </div>
-
-    <!-- Hero Carousel Pagination Dots & Nav -->
-    <div class="hero-nav-controls">
-      <button type="button" class="hero-arrow-btn" (click)="prevHero()" aria-label="Titre précédent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-          <path d="M15 18l-6-6 6-6"/>
-        </svg>
-      </button>
-      <div class="hero-dots">
-        <button 
-          *ngFor="let slide of heroSlides; let idx = index"
-          type="button"
-          class="hero-dot"
-          [class.active]="idx === activeHeroIndex"
-          (click)="setHeroIndex(idx)"
-          [title]="slide.title">
-        </button>
-      </div>
-      <button type="button" class="hero-arrow-btn" (click)="nextHero()" aria-label="Titre suivant">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- Studio Brands Strip (Sleek Glass Badges) -->
-<section class="studios-section">
-  <div class="container">
-    <div class="studios-grid">
-      <!-- Netflix -->
-      <div class="studio-card">
-        <svg class="studio-logo" viewBox="0 0 100 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5.5 0H0V28H5.5V0Z" fill="#E50914"/>
-          <path d="M21 0H15.5V28H21V0Z" fill="#E50914"/>
-          <path d="M0 0H7L21 28H14L0 0Z" fill="#B81D24"/>
-          <text x="32" y="20" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="16" letter-spacing="2">NETFLIX</text>
-        </svg>
-      </div>
-
-      <!-- HBO Max -->
-      <div class="studio-card">
-        <span class="studio-text-brand">HBO <span>MAX</span></span>
-      </div>
-
-      <!-- Marvel Studios -->
-      <div class="studio-card">
-        <div class="marvel-badge">
-          <span>MARVEL</span>
+      <div class="header-main-content">
+        <div class="header-badge-pill">
+          <span class="dot-indicator"></span>
+          {{ pageBadge }}
         </div>
-      </div>
-
-      <!-- Star Wars -->
-      <div class="studio-card">
-        <span class="studio-text-brand starwars-text">STAR WARS</span>
-      </div>
-
-      <!-- Pixar -->
-      <div class="studio-card">
-        <span class="studio-text-brand pixar-text">P I X A R</span>
-      </div>
-
-      <!-- Disney+ -->
-      <div class="studio-card">
-        <span class="studio-text-brand disney-text">Disney<span>+</span></span>
-      </div>
-
-      <!-- Warner Bros -->
-      <div class="studio-card">
-        <span class="studio-text-brand wb-text">WARNER BROS.</span>
+        <h1 class="header-page-title">{{ pageTitle }}</h1>
+        <p class="header-page-subtitle">{{ pageSubtitle }}</p>
       </div>
     </div>
-  </div>
-</section>
+  </header>
 
-<!-- "Popular of the week" Ranked Section (SaintStream V2 Giant Stylized Ranks) -->
-<section class="popular-section" *ngIf="popularList && popularList.length > 0">
-  <div class="container">
-    <div class="section-header-row">
-      <div class="section-title-wrap">
-        <span class="badge-section-pill">CLASSEMENT VOD</span>
-        <h2 class="section-heading">Populaires de la semaine</h2>
-      </div>
-      <span class="section-hint">Les titres les plus loués et plébiscités par la communauté</span>
-    </div>
-
-    <div class="popular-ranks-grid">
-      <a 
-        *ngFor="let item of popularList; let idx = index" 
-        [routerLink]="['/media', item.id]" 
-        class="popular-rank-card">
+  <!-- 2. Search & Multi-criteria Filters Toolbar (AT THE TOP) -->
+  <section class="toolbar-section">
+    <div class="container">
+      <div class="filter-panel">
         
-        <!-- Big Stylized Rank Numeral -->
-        <div class="rank-number-display">{{ idx + 1 }}</div>
-
-        <!-- Landscape Backdrop Thumbnail (Clean & Sharp) -->
-        <div class="rank-thumb-wrapper">
-          <img 
-            [src]="'/assets/backdrops/' + item.id + '.jpg'" 
-            [alt]="item.title"
-            class="rank-thumb-img"
-            loading="lazy"
-          />
-          <div class="rank-overlay-glow">
-            <div class="rank-play-bubble">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                <path d="M8 5v14l11-7z"/>
+        <!-- Primary Search Bar (US009: Recherche par titre) -->
+        <form class="search-bar-wrap" (ngSubmit)="onSearchSubmit()">
+          <div class="search-input-group">
+            <span class="search-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20">
+                <circle cx="11" cy="11" r="8"/>
+                <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
               </svg>
+            </span>
+            <input 
+              type="text" 
+              class="search-input" 
+              name="searchQuery"
+              [(ngModel)]="searchQuery" 
+              [placeholder]="searchPlaceholder"
+              (input)="onSearchSubmit()"
+              autocomplete="off"
+              aria-label="Rechercher par titre">
+            
+            <button 
+              type="button" 
+              *ngIf="searchQuery" 
+              class="btn-clear-search" 
+              (click)="clearSearch()" 
+              title="Effacer la recherche"
+              aria-label="Effacer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <button type="submit" class="btn-search-submit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+              <circle cx="11" cy="11" r="8"/>
+              <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+            </svg>
+            <span>Rechercher</span>
+          </button>
+        </form>
+
+        <!-- Horizontal Genre Chips Bar (US011) -->
+        <div class="genres-chips-bar" *ngIf="genres && genres.length > 0">
+          <button 
+            type="button"
+            class="genre-chip"
+            [class.active-chip]="selectedGenreId === null"
+            (click)="selectGenre(null)">
+            Tous les genres
+          </button>
+
+          <button 
+            *ngFor="let g of genres" 
+            type="button"
+            class="genre-chip"
+            [class.active-chip]="selectedGenreId === g.id"
+            (click)="selectGenre(g.id)">
+            {{ g.name }}
+          </button>
+        </div>
+
+        <!-- Secondary Filters Row (US011: Année, Acteur, Réalisateur, Type) -->
+        <div class="secondary-filters-row">
+          <!-- Format Selector (only when in general catalogue) -->
+          <div class="format-pills" *ngIf="pageMode === 'catalogue'">
+            <button 
+              type="button" 
+              class="pill-btn" 
+              [class.active]="selectedType === 'ALL'" 
+              (click)="setType('ALL')">
+              Tous
+            </button>
+            <button 
+              type="button" 
+              class="pill-btn" 
+              [class.active]="selectedType === 'FILM'" 
+              (click)="setType('FILM')">
+              Films
+            </button>
+            <button 
+              type="button" 
+              class="pill-btn" 
+              [class.active]="selectedType === 'SERIE'" 
+              (click)="setType('SERIE')">
+              Séries
+            </button>
+          </div>
+
+          <div class="dropdowns-group">
+            <!-- Filter: Année -->
+            <div class="custom-select-wrap">
+              <label for="filter-year" class="visually-hidden">Année</label>
+              <select 
+                id="filter-year" 
+                class="custom-select" 
+                [(ngModel)]="selectedYear" 
+                (ngModelChange)="onFilterChange()">
+                <option [ngValue]="null">Année : Toutes</option>
+                <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+              </select>
+              <span class="select-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Filter: Acteur -->
+            <div class="custom-select-wrap">
+              <label for="filter-actor" class="visually-hidden">Acteur</label>
+              <select 
+                id="filter-actor" 
+                class="custom-select" 
+                [(ngModel)]="selectedActorId" 
+                (ngModelChange)="onFilterChange()">
+                <option [ngValue]="null">Acteur : Tous</option>
+                <option *ngFor="let a of actors" [ngValue]="a.id">{{ a.name }}</option>
+              </select>
+              <span class="select-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </span>
+            </div>
+
+            <!-- Filter: Réalisateur -->
+            <div class="custom-select-wrap">
+              <label for="filter-director" class="visually-hidden">Réalisateur</label>
+              <select 
+                id="filter-director" 
+                class="custom-select" 
+                [(ngModel)]="selectedDirectorId" 
+                (ngModelChange)="onFilterChange()">
+                <option [ngValue]="null">Réalisateur : Tous</option>
+                <option *ngFor="let d of directors" [ngValue]="d.id">{{ d.name }}</option>
+              </select>
+              <span class="select-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </span>
             </div>
           </div>
-          <span class="rank-badge-type">{{ item.type === 'FILM' ? 'FILM' : 'SÉRIE' }}</span>
         </div>
 
-        <div class="rank-info-block">
-          <h4 class="rank-title" [title]="item.title">{{ item.title }}</h4>
-          <div class="rank-meta-row">
-            <span class="star-rating">★ 8.8</span>
-            <span class="meta-dot">•</span>
-            <span class="rank-year">{{ item.releaseYear }}</span>
-            <span class="rank-price-pill">{{ item.rentalPricePerDay | number:'1.2-2' }} €/j</span>
-          </div>
+        <!-- Active Filter Badges Bar -->
+        <div class="active-filters-chips-row" *ngIf="hasActiveFilters()">
+          <span class="active-label">Filtres appliqués :</span>
+
+          <!-- Search query chip -->
+          <span class="filter-tag" *ngIf="searchQuery">
+            Recherche: « {{ searchQuery }} »
+            <button type="button" class="chip-remove" (click)="clearSearch()" aria-label="Supprimer">✕</button>
+          </span>
+
+          <!-- Genre chip -->
+          <span class="filter-tag" *ngIf="selectedGenreId">
+            Genre: {{ getActiveGenreName() }}
+            <button type="button" class="chip-remove" (click)="clearGenre()" aria-label="Supprimer">✕</button>
+          </span>
+
+          <!-- Year chip -->
+          <span class="filter-tag" *ngIf="selectedYear">
+            Année: {{ selectedYear }}
+            <button type="button" class="chip-remove" (click)="clearYear()" aria-label="Supprimer">✕</button>
+          </span>
+
+          <!-- Actor chip -->
+          <span class="filter-tag" *ngIf="selectedActorId">
+            Acteur: {{ getActiveActorName() }}
+            <button type="button" class="chip-remove" (click)="clearActor()" aria-label="Supprimer">✕</button>
+          </span>
+
+          <!-- Director chip -->
+          <span class="filter-tag" *ngIf="selectedDirectorId">
+            Réalisateur: {{ getActiveDirectorName() }}
+            <button type="button" class="chip-remove" (click)="clearDirector()" aria-label="Supprimer">✕</button>
+          </span>
+
+          <!-- Reset all button -->
+          <button type="button" class="btn-reset-all-chips" (click)="resetFilters()">
+            Tout réinitialiser ({{ getActiveFiltersCount() }})
+          </button>
         </div>
-      </a>
+
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Filter & Search Section (Modern SaintStream Filter System) -->
-<section class="toolbar-section">
-  <div class="container">
-    <div class="filter-panel">
-      <!-- Search Input Bar -->
-      <form class="search-bar-wrap" (ngSubmit)="onSearchSubmit()">
-        <div class="search-input-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  <!-- 3. Paginated Media Grid (US008: Liste paginée de 12 titres) -->
+  <main class="catalogue-main">
+    <div class="container">
+      
+      <!-- Catalogue Header / Counter -->
+      <div class="catalogue-results-bar">
+        <div class="results-count-wrap">
+          <span class="count-badge" *ngIf="!isLoading">{{ totalElements }} titres</span>
+          <span class="results-label" *ngIf="!isLoading">
+            Page {{ currentPage + 1 }} sur {{ totalPages === 0 ? 1 : totalPages }}
+          </span>
+        </div>
+
+        <div class="results-info-text" *ngIf="!isLoading">
+          12 titres par page • Audio Dolby 5.1 & Qualité 4K Ultra HD
+        </div>
+      </div>
+
+      <!-- Loading State (Skeleton Grid) -->
+      <div class="cards-grid skeleton-grid" *ngIf="isLoading">
+        <div class="card-skeleton" *ngFor="let n of [1,2,3,4,5,6,7,8,9,10,11,12]">
+          <div class="skeleton-poster"></div>
+          <div class="skeleton-line title-line"></div>
+          <div class="skeleton-line meta-line"></div>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div class="alert-banner" *ngIf="hasError">
+        <div class="alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          <input 
-            type="text" 
-            [(ngModel)]="searchQuery" 
-            name="searchQuery"
-            placeholder="Rechercher un film, une série, un univers (ex: Inception, Breaking Bad, Batman...)"
-            class="search-input"
-          />
-          <button 
-            *ngIf="searchQuery" 
-            type="button" 
-            class="btn-clear-search" 
-            (click)="clearSearch()" 
-            title="Effacer la saisie">
-            ✕
-          </button>
         </div>
-        <button type="submit" class="btn-search-submit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+        <div class="alert-content">
+          <h4>Erreur de connexion</h4>
+          <p>{{ errorMessage }}</p>
+        </div>
+        <button type="button" class="btn-retry" (click)="fetchMedia()">Réessayer</button>
+      </div>
+
+      <!-- Empty State (US009: Cas aucun résultat) -->
+      <div class="empty-results-box" *ngIf="!isLoading && !hasError && mediaList.length === 0">
+        <div class="empty-search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="56" height="56">
             <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+            <path stroke-linecap="round" d="M8 11h6"/>
           </svg>
-          <span>Rechercher</span>
-        </button>
-      </form>
-
-      <!-- Primary Filter: Horizontal Genre Chips Bar -->
-      <div class="genres-chips-bar" *ngIf="genres && genres.length > 0">
-        <button 
-          type="button" 
-          class="genre-chip"
-          [class.active]="selectedGenreId === null"
-          (click)="selectGenre(null)">
-          Tous les genres
-        </button>
-        <button 
-          *ngFor="let g of genres" 
-          type="button" 
-          class="genre-chip"
-          [class.active]="selectedGenreId === g.id"
-          (click)="selectGenre(g.id)">
-          {{ g.name }}
-        </button>
-      </div>
-
-      <!-- Secondary Filters Bar -->
-      <div class="secondary-filters-row">
-        <!-- Media Type Selector -->
-        <div class="type-segmented">
-          <button 
-            type="button" 
-            class="seg-btn" 
-            [class.active]="selectedType === 'ALL'"
-            (click)="setType('ALL')">
-            Tous les formats
-          </button>
-          <button 
-            type="button" 
-            class="seg-btn" 
-            [class.active]="selectedType === 'FILM'"
-            (click)="setType('FILM')">
-            Films uniquement
-          </button>
-          <button 
-            type="button" 
-            class="seg-btn" 
-            [class.active]="selectedType === 'SERIE'"
-            (click)="setType('SERIE')">
-            Séries uniquement
-          </button>
         </div>
-
-        <!-- Dropdown Filters Group -->
-        <div class="dropdowns-group">
-          <!-- Year Select -->
-          <div class="custom-select-wrap">
-            <select [(ngModel)]="selectedYear" (change)="onFilterChange()">
-              <option [ngValue]="null">Année : Toutes</option>
-              <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
-            </select>
-            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-          </div>
-
-          <!-- Actor Select -->
-          <div class="custom-select-wrap">
-            <select [(ngModel)]="selectedActorId" (change)="onFilterChange()">
-              <option [ngValue]="null">Acteur : Tous</option>
-              <option *ngFor="let a of actors" [ngValue]="a.id">{{ a.name }}</option>
-            </select>
-            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-          </div>
-
-          <!-- Director Select -->
-          <div class="custom-select-wrap">
-            <select [(ngModel)]="selectedDirectorId" (change)="onFilterChange()">
-              <option [ngValue]="null">Réalisateur : Tous</option>
-              <option *ngFor="let d of directors" [ngValue]="d.id">{{ d.name }}</option>
-            </select>
-            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Active Filters Removable Chips Row -->
-      <div class="active-filters-chips-row" *ngIf="hasActiveFilters()">
-        <span class="active-label">Filtres appliqués :</span>
-
-        <!-- Search term chip -->
-        <span class="active-chip" *ngIf="searchQuery">
-          Recherche: « {{ searchQuery }} »
-          <button type="button" class="chip-remove" (click)="clearSearch()">✕</button>
-        </span>
-
-        <!-- Media Type chip -->
-        <span class="active-chip" *ngIf="selectedType !== 'ALL'">
-          Format: {{ selectedType === 'FILM' ? 'Films' : 'Séries' }}
-          <button type="button" class="chip-remove" (click)="setType('ALL')">✕</button>
-        </span>
-
-        <!-- Genre chip -->
-        <span class="active-chip" *ngIf="selectedGenreId">
-          Genre: {{ getActiveGenreName() }}
-          <button type="button" class="chip-remove" (click)="clearGenre()">✕</button>
-        </span>
-
-        <!-- Year chip -->
-        <span class="active-chip" *ngIf="selectedYear">
-          Année: {{ selectedYear }}
-          <button type="button" class="chip-remove" (click)="clearYear()">✕</button>
-        </span>
-
-        <!-- Actor chip -->
-        <span class="active-chip" *ngIf="selectedActorId">
-          Acteur: {{ getActiveActorName() }}
-          <button type="button" class="chip-remove" (click)="clearActor()">✕</button>
-        </span>
-
-        <!-- Director chip -->
-        <span class="active-chip" *ngIf="selectedDirectorId">
-          Réalisateur: {{ getActiveDirectorName() }}
-          <button type="button" class="chip-remove" (click)="clearDirector()">✕</button>
-        </span>
-
-        <!-- Reset all button -->
-        <button type="button" class="btn-reset-all-chips" (click)="resetFilters()">
-          Tout réinitialiser ({{ getActiveFiltersCount() }})
+        <h3 class="empty-header">Aucun titre trouvé</h3>
+        <p class="empty-suggestion">
+          Aucun {{ pageMode === 'films' ? 'film' : 'titre' }} ne correspond à vos critères de recherche.
+          Essayez d'élargir votre recherche ou de réinitialiser vos filtres.
+        </p>
+        <button type="button" class="btn-clear-all" (click)="resetFilters()">
+          Réinitialiser tous les filtres
         </button>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- Catalogue Grid Main Section -->
-<main class="catalogue-main">
-  <div class="container">
-    <div class="section-top-bar">
-      <div class="heading-group">
-        <h2 class="section-title">
-          <span *ngIf="selectedType === 'FILM'">Films Disponibles</span>
-          <span *ngIf="selectedType === 'SERIE'">Séries Disponibles</span>
-          <span *ngIf="selectedType === 'ALL'">Catalogue Général</span>
-          <span class="results-count-badge">{{ totalElements }} titres</span>
-        </h2>
-        <p class="section-subtitle">Streaming haute définition & 4K Ultra HD avec audio Dolby multicanal</p>
+      <!-- Media Cards Grid (12 items per page) -->
+      <div class="cards-grid" *ngIf="!isLoading && !hasError && mediaList.length > 0">
+        <app-media-card 
+          *ngFor="let item of mediaList" 
+          [media]="item">
+        </app-media-card>
       </div>
-    </div>
 
-    <!-- Error Alert -->
-    <div *ngIf="hasError" class="alert-banner">
-      <div class="alert-icon">⚠️</div>
-      <div class="alert-text">
-        <h4>Connexion au serveur momentanément interrompue</h4>
-        <p>{{ errorMessage }}</p>
-      </div>
-      <button class="btn-retry" (click)="fetchMedia()">Réessayer</button>
-    </div>
+      <!-- Pagination Controls (US008) -->
+      <app-pagination
+        *ngIf="!isLoading && !hasError && totalPages > 1"
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        [totalElements]="totalElements"
+        [pageSize]="pageSize"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
 
-    <!-- Loading Skeleton Grid -->
-    <div *ngIf="isLoading" class="cards-grid">
-      <div class="card-skeleton" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
-        <div class="skeleton-thumb"></div>
-        <div class="skeleton-bar" style="width: 50%;"></div>
-        <div class="skeleton-bar" style="width: 85%;"></div>
-      </div>
     </div>
-
-    <!-- Empty State -->
-    <div *ngIf="!isLoading && !hasError && mediaList.length === 0" class="empty-results-box">
-      <div class="empty-search-icon">🎬</div>
-      <h3 class="empty-header">Aucun titre ne correspond à vos filtres</h3>
-      <p class="empty-suggestion">
-        Essayez d'ajuster vos critères de recherche ou de naviguer par catégorie.
-      </p>
-      <button class="btn-clear-all" (click)="resetFilters()">
-        Réinitialiser et voir tout le catalogue
-      </button>
-    </div>
-
-    <!-- Real Media Cards Grid -->
-    <div *ngIf="!isLoading && !hasError && mediaList.length > 0" class="cards-grid">
-      <app-media-card *ngFor="let item of mediaList" [media]="item"></app-media-card>
-    </div>
-
-    <!-- Pagination Controls -->
-    <app-pagination 
-      *ngIf="!isLoading && !hasError && totalPages > 1"
-      [currentPage]="currentPage"
-      [totalPages]="totalPages"
-      [totalElements]="totalElements"
-      [pageSize]="pageSize"
-      (pageChange)="onPageChange($event)">
-    </app-pagination>
-  </div>
-</main>
+  </main>
+</div>

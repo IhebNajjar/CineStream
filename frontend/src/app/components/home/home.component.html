@@ -1,0 +1,234 @@
+<div class="home-container">
+  <!-- 1. Hero Showcase Carousel -->
+  <section class="hero-showcase" *ngIf="heroSlides && heroSlides.length > 0">
+    <div class="hero-slider-track">
+      <div 
+        *ngFor="let slide of heroSlides; let i = index" 
+        class="hero-slide" 
+        [class.active]="i === activeHeroIndex"
+        [attr.aria-hidden]="i !== activeHeroIndex">
+        
+        <div class="hero-backdrop-wrap">
+          <img 
+            [src]="slide.backdrop" 
+            [alt]="slide.title"
+            class="hero-backdrop-img"
+            loading="lazy">
+          <div class="hero-overlay-gradient"></div>
+          <div class="hero-overlay-radial"></div>
+          <div class="hero-overlay-bottom"></div>
+        </div>
+
+        <div class="container hero-content-container">
+          <div class="hero-content">
+            <div class="hero-tag-badge">
+              <span class="dot-live"></span>
+              {{ slide.tag }}
+              <span class="hero-badge-pill">4K ULTRA HD</span>
+              <span class="hero-badge-pill">DOLBY ATMOS</span>
+            </div>
+
+            <h1 class="hero-title">{{ slide.title }}</h1>
+
+            <div class="hero-meta">
+              <span class="hero-rating">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                {{ slide.rating }}
+              </span>
+              <span class="hero-meta-dot">•</span>
+              <span class="hero-meta-item">{{ slide.year }}</span>
+              <span class="hero-meta-dot">•</span>
+              <span class="hero-meta-age">{{ slide.age }}</span>
+              <span class="hero-meta-dot">•</span>
+              <span class="hero-meta-item">{{ slide.duration }}</span>
+              <span class="hero-meta-dot">•</span>
+              <span class="hero-meta-genres">{{ slide.genres }}</span>
+            </div>
+
+            <p class="hero-synopsis">{{ slide.synopsis }}</p>
+
+            <div class="hero-actions">
+              <a 
+                *ngIf="slide.trailerUrl" 
+                [href]="slide.trailerUrl" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn-hero-primary">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span>Bande-annonce</span>
+              </a>
+
+              <a [routerLink]="['/media', slide.id]" class="btn-hero-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 16v-4M12 8h.01"/>
+                </svg>
+                <span>Détails & Fiche</span>
+              </a>
+
+              <a routerLink="/films" class="btn-hero-tertiary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                  <polyline points="17 2 12 7 7 2"/>
+                </svg>
+                <span>Explorer les Films</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation arrows & dots -->
+    <div class="hero-slider-nav container">
+      <button class="hero-arrow-btn prev-btn" (click)="prevHero()" aria-label="Slide précédente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <div class="hero-dots">
+        <button 
+          *ngFor="let s of heroSlides; let i = index" 
+          class="hero-dot" 
+          [class.active]="i === activeHeroIndex"
+          (click)="goToHeroSlide(i)"
+          [attr.aria-label]="'Aller au slide ' + (i + 1)">
+        </button>
+      </div>
+
+      <button class="hero-arrow-btn next-btn" (click)="nextHero()" aria-label="Slide suivante">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. Studio Brands Strip -->
+  <section class="studios-section">
+    <div class="container">
+      <div class="studios-grid">
+        <div *ngFor="let studio of studios" class="studio-card" [title]="studio.name">
+          <div class="studio-badge-inner" [attr.data-studio]="studio.icon">
+            <span *ngIf="studio.icon === 'netflix'" class="netflix-text">NETFLIX</span>
+            <span *ngIf="studio.icon === 'hbo'" class="hbo-text">HBO <span class="max-badge">MAX</span></span>
+            <span *ngIf="studio.icon === 'marvel'" class="marvel-text">MARVEL</span>
+            <span *ngIf="studio.icon === 'starwars'" class="starwars-text">STAR WARS</span>
+            <span *ngIf="studio.icon === 'pixar'" class="pixar-text">P I X A R</span>
+            <span *ngIf="studio.icon === 'disney'" class="disney-text">Disney<span class="plus-sign">+</span></span>
+            <span *ngIf="studio.icon === 'wb'" class="wb-text">WARNER BROS.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Populaires de la semaine (Top 5 Ranking) -->
+  <section class="popular-section" *ngIf="popularList && popularList.length > 0">
+    <div class="container">
+      <div class="section-header-row">
+        <div>
+          <span class="badge-section-pill">CLASSEMENT VOD</span>
+          <h2 class="section-title">Populaires de la semaine</h2>
+          <p class="section-subtitle">Les titres les plus loués et plébiscités par la communauté</p>
+        </div>
+        <a routerLink="/films" class="link-view-all">
+          <span>Découvrir tout le catalogue</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="popular-track">
+        <div *ngFor="let item of popularList; let rank = index" class="popular-card" [routerLink]="['/media', item.id]">
+          <div class="rank-number">{{ rank + 1 }}</div>
+          <div class="popular-poster-wrap">
+            <img [src]="item.posterUrl" [alt]="item.title" class="popular-poster" loading="lazy">
+            <div class="popular-card-overlay">
+              <span class="popular-play-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </span>
+            </div>
+            <span class="popular-badge" [class.badge-film]="item.type === 'FILM'" [class.badge-serie]="item.type === 'SERIE'">
+              {{ item.type }}
+            </span>
+          </div>
+          <div class="popular-info">
+            <h4 class="popular-title">{{ item.title }}</h4>
+            <div class="popular-meta">
+              <span>{{ item.releaseYear }}</span>
+              <span>•</span>
+              <span class="popular-rating">★ 8.8</span>
+              <span>•</span>
+              <span class="popular-price">{{ item.rentalPricePerDay }} €/j</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Featured Films Section (US008 discovery) -->
+  <section class="featured-showcase-section" *ngIf="featuredFilms && featuredFilms.length > 0">
+    <div class="container">
+      <div class="section-header-row">
+        <div>
+          <span class="badge-section-pill">SÉLECTION CINÉMA</span>
+          <h2 class="section-title">Films à l'Affiche</h2>
+          <p class="section-subtitle">Les chefs-d'œuvre et blockbusters incontournables disponibles en streaming</p>
+        </div>
+        <a routerLink="/films" class="btn-discover-all">
+          <span>Voir tous les films (23)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="cards-grid">
+        <app-media-card *ngFor="let item of featuredFilms" [media]="item"></app-media-card>
+      </div>
+
+      <div class="section-footer-cta">
+        <a routerLink="/films" class="btn-cta-large">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <span>Accéder au catalogue complet des films avec recherche & filtres</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Featured Series Section -->
+  <section class="featured-showcase-section section-series-bg" *ngIf="featuredSeries && featuredSeries.length > 0">
+    <div class="container">
+      <div class="section-header-row">
+        <div>
+          <span class="badge-section-pill">SÉRIES DU MOMENT</span>
+          <h2 class="section-title">Séries Incontournables</h2>
+          <p class="section-subtitle">Saisons intégrales, thrillers haletants et univers immersifs</p>
+        </div>
+        <a routerLink="/series" class="btn-discover-all">
+          <span>Voir toutes les séries (9)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="cards-grid">
+        <app-media-card *ngFor="let item of featuredSeries" [media]="item"></app-media-card>
+      </div>
+    </div>
+  </section>
+</div>
