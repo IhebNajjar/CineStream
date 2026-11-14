@@ -23,6 +23,7 @@ export class RentalsComponent implements OnInit {
   activeWatchLink = signal<WatchLinkResponse | null>(null);
   watchLoading = signal<number | null>(null); // rentalId currently fetching watch link
   watchError = signal<string | null>(null);
+  videoLoadError = signal(false);
 
   ngOnInit(): void {
     this.loadRentals();
@@ -54,6 +55,7 @@ export class RentalsComponent implements OnInit {
   onWatch(rental: Rental): void {
     this.watchLoading.set(rental.id);
     this.watchError.set(null);
+    this.videoLoadError.set(false);
 
     this.rentalService.getWatchLink(rental.id).subscribe({
       next: (linkRes) => {
@@ -67,7 +69,13 @@ export class RentalsComponent implements OnInit {
     });
   }
 
+  onVideoError(event: any): void {
+    console.warn('Flux R2 direct inaccessible, basculement automatique sur le flux de secours local.', event);
+    this.videoLoadError.set(true);
+  }
+
   closePlayer(): void {
     this.activeWatchLink.set(null);
+    this.videoLoadError.set(false);
   }
 }

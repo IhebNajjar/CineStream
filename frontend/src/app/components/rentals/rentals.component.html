@@ -125,7 +125,8 @@
 
       <div class="video-player-wrapper">
         <video
-          [src]="activeWatchLink()?.watchUrl"
+          [src]="videoLoadError() ? 'http://localhost:8080/api/stream/demo/' + (activeWatchLink()?.mediaType === 'SERIE' ? 'serie_demo.mp4' : 'inception_demo.mp4') : activeWatchLink()?.watchUrl"
+          (error)="onVideoError($event)"
           controls
           autoplay
           playsinline
