@@ -1,0 +1,63 @@
+<div class="actor-page-container">
+  <!-- Loading state -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error()" class="error-state">
+    <div class="error-card">
+      <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <h2>{{ error() }}</h2>
+      <a routerLink="/films" class="btn-back">Retour au catalogue</a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading() && actor()" class="actor-content">
+    <div class="actor-header-card">
+      <div class="actor-photo-wrapper">
+        <img [src]="actor()?.photoUrl || '/assets/people/actor_1.jpg'" [alt]="actor()?.name" class="actor-photo" />
+      </div>
+
+      <div class="actor-info">
+        <div class="tag-badge">Acteur / Actrice</div>
+        <h1 class="actor-name">{{ actor()?.name }}</h1>
+        <p *ngIf="actor()?.birthDate" class="actor-meta">
+          <span>Date de naissance :</span> {{ actor()?.birthDate | date:'longDate':'':'fr' }}
+        </p>
+        <p class="actor-bio">{{ actor()?.bio || 'Biographie à venir.' }}</p>
+      </div>
+    </div>
+
+    <!-- Filmography section -->
+    <div class="filmography-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Filmographie</h2>
+        <span class="count-pill">{{ actor()?.filmography?.length || 0 }} rôles</span>
+      </div>
+
+      <div class="roles-grid">
+        <div *ngFor="let role of actor()?.filmography" class="role-card">
+          <a [routerLink]="['/media', role.mediaId]" class="role-poster-link">
+            <img [src]="role.posterUrl || '/assets/posters/1.jpg'" [alt]="role.mediaTitle" class="role-poster" />
+            <span class="type-pill" [class.type-serie]="role.type === 'SERIE'">
+              {{ role.type === 'SERIE' ? 'SÉRIE' : 'FILM' }}
+            </span>
+          </a>
+          <div class="role-details">
+            <a [routerLink]="['/media', role.mediaId]" class="role-media-title">{{ role.mediaTitle }}</a>
+            <div class="role-character">
+              <span class="char-label">Personnage :</span>
+              <span class="char-name">{{ role.characterName }}</span>
+            </div>
+            <div class="role-year">{{ role.releaseYear }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<div class="rentals-container">
+  <div class="rentals-header">
+    <div class="header-left">
+      <h1 class="page-title">Mes Locations</h1>
+      <p class="page-subtitle">Accédez à vos films et séries loués et visionnez-les en haute définition.</p>
+    </div>
+
+    <!-- Tabs switcher -->
+    <div class="tabs-switcher">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'active'"
+        (click)="activeTab.set('active')"
+      >
+        En cours ({{ getActiveRentals().length }})
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab() === 'history'"
+        (click)="activeTab.set('history')"
+      >
+        Historique ({{ getExpiredRentals().length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement de vos locations...</p>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="watchError()" class="alert-error">
+    {{ watchError() }}
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading()">
+    <!-- Tab 1: Active Rentals -->
+    <div *ngIf="activeTab() === 'active'">
+      <div *ngIf="getActiveRentals().length === 0" class="empty-state">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        <h3>Aucune location en cours</h3>
+        <p>Explorez notre catalogue pour louer des films et séries avec votre portefeuille virtuel.</p>
+        <a routerLink="/films" class="btn-primary">Découvrir le catalogue</a>
+      </div>
+
+      <div *ngIf="getActiveRentals().length > 0" class="rentals-grid">
+        <div *ngFor="let rental of getActiveRentals()" class="rental-card">
+          <div class="rental-poster-wrap">
+            <img [src]="rental.mediaPosterUrl || '/assets/posters/1.jpg'" [alt]="rental.mediaTitle" class="rental-poster" />
+            <div class="countdown-badge">
+              <span class="pulse-dot"></span>
+              <span *ngIf="(rental.daysLeft || 0) > 0">{{ rental.daysLeft }} j restant{{ (rental.daysLeft || 0) > 1 ? 's' : '' }}</span>
+              <span *ngIf="(rental.daysLeft || 0) === 0">{{ rental.hoursLeft }} h restante{{ (rental.hoursLeft || 0) > 1 ? 's' : '' }}</span>
+            </div>
+          </div>
+
+          <div class="rental-info">
+            <span class="type-pill" [class.type-serie]="rental.mediaType === 'SERIE'">
+              {{ rental.mediaType === 'SERIE' ? 'SÉRIE' : 'FILM' }}
+            </span>
+            <h3 class="rental-title">{{ rental.mediaTitle }}</h3>
+            <p class="rental-expires">Expire le {{ rental.endDate | date:'medium':'':'fr' }}</p>
+
+            <div class="rental-actions">
+              <!-- Prominent Watch button fetching presigned Cloudflare R2 / S3 link -->
+              <button
+                class="btn-watch"
+                [disabled]="watchLoading() === rental.id"
+                (click)="onWatch(rental)"
+              >
+                <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span>{{ watchLoading() === rental.id ? 'Génération du lien...' : 'Regarder' }}</span>
+              </button>
+
+              <a [routerLink]="['/media', rental.mediaId]" class="btn-details">Fiche</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: History (Expired) -->
+    <div *ngIf="activeTab() === 'history'">
+      <div *ngIf="getExpiredRentals().length === 0" class="empty-state">
+        <p>Aucune location expirée dans votre historique.</p>
+      </div>
+
+      <div *ngIf="getExpiredRentals().length > 0" class="rentals-grid">
+        <div *ngFor="let rental of getExpiredRentals()" class="rental-card card-expired">
+          <div class="rental-poster-wrap">
+            <img [src]="rental.mediaPosterUrl || '/assets/posters/1.jpg'" [alt]="rental.mediaTitle" class="rental-poster" />
+            <div class="expired-badge">Terminée</div>
+          </div>
+
+          <div class="rental-info">
+            <h3 class="rental-title">{{ rental.mediaTitle }}</h3>
+            <p class="rental-expires">Terminée le {{ rental.endDate | date:'short':'':'fr' }}</p>
+            <p class="rental-cost">Montant : {{ rental.totalPrice | currency:'EUR':'symbol':'1.2-2':'fr' }} ({{ rental.days }} jours)</p>
+
+            <a [routerLink]="['/media', rental.mediaId]" class="btn-re-rent">Relouer</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Streaming Modal Player (Cloudflare R2 / S3 Presigned URL playback) -->
+  <div *ngIf="activeWatchLink()" class="video-modal-backdrop" (click)="closePlayer()">
+    <div class="video-modal-content" (click)="$event.stopPropagation()">
+      <div class="video-modal-header">
+        <div class="video-title-wrap">
+          <span class="live-dot"></span>
+          <h2 class="stream-title">{{ activeWatchLink()?.title }}</h2>
+          <span class="secure-token-pill">Lien sécurisé Cloudflare R2</span>
+        </div>
+        <button class="btn-close-video" (click)="closePlayer()">&times;</button>
+      </div>
+
+      <div class="video-player-wrapper">
+        <video
+          [src]="activeWatchLink()?.watchUrl"
+          controls
+          autoplay
+          playsinline
+          class="html5-video-player"
+        >
+          Votre navigateur ne prend pas en charge la balise vidéo HTML5.
+        </video>
+      </div>
+
+      <div class="video-modal-footer">
+        <span class="expiry-notice">Ce lien temporaire expire le {{ activeWatchLink()?.expiresAt | date:'medium':'':'fr' }}.</span>
+        <button class="btn-close-sub" (click)="closePlayer()">Fermer le lecteur</button>
+      </div>
+    </div>
+  </div>
+</div>

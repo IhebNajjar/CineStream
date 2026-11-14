@@ -14,6 +14,9 @@ public class MediaSummaryDto {
     private String posterUrl;
     private BigDecimal rentalPricePerDay;
     private List<GenreDto> genres;
+    private Double ratingAverage;
+    private Long ratingCount;
+    private String videoKey;
 
     public MediaSummaryDto() {
     }
@@ -29,6 +32,22 @@ public class MediaSummaryDto {
         this.posterUrl = posterUrl;
         this.rentalPricePerDay = rentalPricePerDay;
         this.genres = genres;
+    }
+
+    public Double getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public void setRatingAverage(Double ratingAverage) {
+        this.ratingAverage = ratingAverage;
+    }
+
+    public Long getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Long ratingCount) {
+        this.ratingCount = ratingCount;
     }
 
     public Long getId() {
@@ -101,5 +120,13 @@ public class MediaSummaryDto {
 
     public void setGenres(List<GenreDto> genres) {
         this.genres = genres;
+    }
+
+    public String getVideoKey() {
+        return videoKey;
+    }
+
+    public void setVideoKey(String videoKey) {
+        this.videoKey = videoKey;
     }
 }

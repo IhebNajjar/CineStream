@@ -19,11 +19,7 @@
     <p class="not-found-desc">
       Le film ou la série que vous recherchez n'est pas disponible dans le catalogue CineStream ou a été retiré.
     </p>
-    <a routerLink="/" class="btn-back">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
+    <a routerLink="/films" class="btn-back">
       Retourner au catalogue
     </a>
   </div>
@@ -45,7 +41,7 @@
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <a routerLink="/">Accueil</a>
         <span class="sep">/</span>
-        <a routerLink="/" [queryParams]="{type: media.type}">{{ media.type === 'FILM' ? 'Films' : 'Séries' }}</a>
+        <a routerLink="/films" [queryParams]="{type: media.type}">{{ media.type === 'FILM' ? 'Films' : 'Séries' }}</a>
         <span class="sep">/</span>
         <span class="current">{{ media.title }}</span>
       </nav>
@@ -64,33 +60,91 @@
             class="main-poster"
           />
           <div class="poster-quality-badge">4K ULTRA HD</div>
+
+          <!-- US030: Favorite Toggle Button -->
+          <button
+            class="btn-fav-toggle"
+            [class.is-fav]="isFavorite"
+            (click)="toggleFavorite()"
+            [title]="isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
         </div>
 
-        <!-- Rental Action Box (SaintStream Emerald style) -->
+        <!-- US023, US024, US025, US026, US027: Rental Action Box -->
         <div class="rental-box">
           <div class="rental-price-row">
-            <span class="label">Tarif de location</span>
+            <span class="label">Tarif journalier</span>
             <div class="price-tag">
               <span class="amount">{{ media.rentalPricePerDay | number:'1.2-2' }} €</span>
               <span class="per">/ jour</span>
             </div>
           </div>
 
-          <button class="btn-rent" (click)="onRentClick()">
+          <!-- US023: Duration counter buttons '-' and '+' -->
+          <div class="duration-selector-row">
+            <span class="selector-label">Durée de location :</span>
+            <div class="counter-control">
+              <button
+                type="button"
+                class="btn-counter"
+                (click)="decrementDays()"
+                [disabled]="rentalDays <= 1"
+                aria-label="Diminuer la durée"
+              >
+                −
+              </button>
+              <span class="counter-display">{{ rentalDays }} jour{{ rentalDays > 1 ? 's' : '' }}</span>
+              <button
+                type="button"
+                class="btn-counter"
+                (click)="incrementDays()"
+                [disabled]="rentalDays >= 90"
+                aria-label="Augmenter la durée"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Total Price Recalculation -->
+          <div class="total-price-row">
+            <span class="total-label">Montant total :</span>
+            <span class="total-val">{{ calculateTotalPrice() | number:'1.2-2' }} €</span>
+          </div>
+
+          <!-- Rental feedback messages -->
+          <div *ngIf="rentalSuccessMsg" class="alert-success-rental">
+            {{ rentalSuccessMsg }}
+            <a routerLink="/rentals" class="btn-goto-rentals">Visionner sur Mes locations</a>
+          </div>
+
+          <div *ngIf="rentalErrorMsg" class="alert-error-rental">
+            <p>{{ rentalErrorMsg }}</p>
+            <a *ngIf="rentalErrorMsg.includes('Solde')" routerLink="/profile" class="btn-goto-topup">
+              → Recharger mon solde
+            </a>
+          </div>
+
+          <!-- US024: Rent button with server-side processing -->
+          <button class="btn-rent" (click)="onRentClick()" [disabled]="isRenting">
             <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
               <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
             </svg>
-            Louer ce titre
+            <span>{{ isRenting ? 'Traitement...' : 'Louer ce titre (' + (calculateTotalPrice() | number:'1.2-2') + ' €)' }}</span>
           </button>
           
           <div class="rental-guarantees">
             <span>✓ Streaming illimité pendant la location</span>
             <span>✓ Qualité 4K HDR & Dolby Atmos</span>
-            <span>✓ Compatible TV, mobile, PC & tablette</span>
+            <span>✓ Lecteur Cloudflare R2 sécurisé</span>
           </div>
         </div>
 
-        <!-- Trailer Link (US029) -->
+        <!-- US029: Trailer Link / Button -->
         <div *ngIf="media.trailerUrl" class="trailer-box">
           <a 
             [href]="media.trailerUrl" 
@@ -127,7 +181,8 @@
             <span class="meta-dot">•</span>
             <span class="meta-item">{{ media.language }} ({{ media.country }})</span>
             <span class="meta-dot">•</span>
-            <span class="meta-star">★ 8.8 / 10</span>
+            <!-- US017: Community Average Rating -->
+            <span class="meta-star">★ {{ (averageRating || media.ratingAverage || 8.8) | number:'1.1-1' }} / 5 ({{ reviewsCount || media.reviewsCount || 0 }} avis)</span>
           </div>
 
           <h1 class="media-title">{{ media.title }}</h1>
@@ -149,14 +204,48 @@
           <p class="synopsis-text">{{ media.description }}</p>
         </div>
 
-        <!-- Real Directors -->
+        <!-- US012: Series Seasons and Episodes List -->
+        <div class="section-block" *ngIf="media.type === 'SERIE' && media.seasons && media.seasons.length > 0">
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Saisons & Épisodes
+          </h2>
+
+          <!-- Seasons Tabs -->
+          <div class="seasons-tabs">
+            <button
+              *ngFor="let s of media.seasons; let idx = index"
+              class="season-tab-btn"
+              [class.active]="selectedSeasonIndex === idx"
+              (click)="selectedSeasonIndex = idx"
+            >
+              {{ s.title }} ({{ s.episodes.length }} ép.)
+            </button>
+          </div>
+
+          <!-- Episodes Cards -->
+          <div class="episodes-list" *ngIf="media.seasons[selectedSeasonIndex]">
+            <div *ngFor="let ep of media.seasons[selectedSeasonIndex].episodes" class="episode-row">
+              <div class="ep-num">{{ ep.episodeNumber }}</div>
+              <div class="ep-info">
+                <div class="ep-title-row">
+                  <span class="ep-title">{{ ep.title }}</span>
+                  <span class="ep-duration" *ngIf="ep.duration">{{ ep.duration }} min</span>
+                </div>
+                <p class="ep-desc" *ngIf="ep.description">{{ ep.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- US014: Real Directors with clickable link to /directors/:id -->
         <div class="section-block" *ngIf="media.directors && media.directors.length > 0">
           <h2 class="block-title">
             <span class="title-accent-bar"></span>
             Réalisation
           </h2>
           <div class="directors-grid">
-            <div *ngFor="let d of media.directors" class="person-card">
+            <a *ngFor="let d of media.directors" [routerLink]="['/directors', d.id]" class="person-card linkable-card">
               <img 
                 [src]="d.photoUrl || ('/assets/people/director_' + d.id + '.jpg')" 
                 [alt]="d.name"
@@ -164,21 +253,21 @@
               />
               <div class="person-meta">
                 <span class="person-name">{{ d.name }}</span>
-                <span class="person-role">Réalisateur</span>
+                <span class="person-role">Réalisateur • Voir filmographie →</span>
                 <p class="person-bio" *ngIf="d.bio">{{ d.bio }}</p>
               </div>
-            </div>
+            </a>
           </div>
         </div>
 
-        <!-- Real Cast with Character Roles (SaintStream Style Avatars) -->
+        <!-- US013: Real Cast with clickable link to /actors/:id -->
         <div class="section-block" *ngIf="media.actors && media.actors.length > 0">
           <h2 class="block-title">
             <span class="title-accent-bar"></span>
             Distribution Principale
           </h2>
           <div class="cast-grid">
-            <div *ngFor="let a of media.actors" class="cast-card">
+            <a *ngFor="let a of media.actors" [routerLink]="['/actors', a.actorId]" class="cast-card linkable-card">
               <img 
                 [src]="a.photoUrl || ('/assets/people/actor_' + a.actorId + '.jpg')" 
                 [alt]="a.name"
@@ -187,6 +276,81 @@
               <div class="cast-info">
                 <span class="actor-name">{{ a.name }}</span>
                 <span class="char-role">{{ a.characterName }}</span>
+                <span class="see-roles">Voir la fiche →</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- US016, US017, US018, US019: Reviews & Ratings Section -->
+        <div class="section-block reviews-section">
+          <h2 class="block-title">
+            <span class="title-accent-bar"></span>
+            Avis & Notes de la Communauté
+          </h2>
+
+          <!-- Add / Edit Review Form (US016) -->
+          <div class="review-form-card">
+            <h3 class="review-form-title">Donnez votre avis sur « {{ media.title }} »</h3>
+
+            <div *ngIf="reviewMsg" class="alert-success-rental">
+              {{ reviewMsg }}
+            </div>
+
+            <form (ngSubmit)="onSubmitReview()" class="review-form">
+              <div class="star-picker-row">
+                <span class="picker-label">Votre note :</span>
+                <div class="star-rating-select">
+                  <button
+                    type="button"
+                    *ngFor="let star of [1, 2, 3, 4, 5]"
+                    class="btn-star"
+                    [class.filled]="userRating >= star"
+                    (click)="userRating = star"
+                  >
+                    ★
+                  </button>
+                  <span class="rating-num-label">{{ userRating }} / 5 étoiles</span>
+                </div>
+              </div>
+
+              <div class="form-group-review">
+                <textarea
+                  [(ngModel)]="userComment"
+                  name="userComment"
+                  rows="3"
+                  placeholder="Partagez vos impressions sur la mise en scène, le jeu d'acteur, le scénario..."
+                  class="review-textarea"
+                ></textarea>
+              </div>
+
+              <button type="submit" [disabled]="submittingReview" class="btn-submit-review">
+                {{ submittingReview ? 'Publication...' : 'Publier mon avis' }}
+              </button>
+            </form>
+          </div>
+
+          <!-- Existing Reviews List (US017, US018, US019) -->
+          <div class="reviews-list">
+            <div *ngIf="reviews.length === 0" class="no-reviews">
+              <p>Aucun avis pour le moment. Soyez le premier spectateur à noter ce titre !</p>
+            </div>
+
+            <div *ngFor="let rev of reviews" class="review-item">
+              <div class="review-header">
+                <div class="reviewer-meta">
+                  <span class="reviewer-email">{{ rev.userEmail }}</span>
+                  <span class="review-date">{{ rev.createdAt | date:'mediumDate':'':'fr' }}</span>
+                </div>
+                <div class="review-stars">
+                  <span *ngFor="let s of [1,2,3,4,5]" [class.star-on]="rev.rating >= s">★</span>
+                </div>
+              </div>
+              <p class="review-comment" *ngIf="rev.comment">{{ rev.comment }}</p>
+
+              <!-- Actions for Author or Admin (US018, US019) -->
+              <div *ngIf="rev.ownReview" class="review-actions">
+                <button class="btn-del-review" (click)="onDeleteReview(rev.id)">Supprimer cet avis</button>
               </div>
             </div>
           </div>
@@ -218,7 +382,7 @@
           </div>
         </div>
 
-        <!-- Similar Recommended Titles (SaintStream V2 Feature) -->
+        <!-- Similar Recommended Titles -->
         <div class="section-block" *ngIf="similarTitles && similarTitles.length > 0">
           <h2 class="block-title">
             <span class="title-accent-bar"></span>

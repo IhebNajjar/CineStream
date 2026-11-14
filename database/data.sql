@@ -170,3 +170,51 @@ INSERT INTO media_director (media_id, director_id) VALUES
 (19, 9),
 (20, 9),
 (21, 5);
+
+
+-- 8. Saisons des Séries (US012, US034)
+INSERT INTO season (id, media_id, season_number, title, release_year) VALUES
+(1, 7, 1, 'Saison 1', 2008),
+(2, 7, 2, 'Saison 2', 2009),
+(3, 8, 1, 'Saison 1', 2023),
+(4, 9, 1, 'Saison 1', 2016),
+(5, 15, 1, 'Saison 1', 2015),
+(6, 21, 1, 'Mini-Série', 2019),
+(7, 22, 1, 'Saison 1', 2019),
+(8, 27, 1, 'Saison 1', 2013),
+(9, 28, 1, 'Saison 1', 2018),
+(10, 32, 1, 'Saison 1', 2021);
+
+-- 9. Épisodes des Séries (US012, US034)
+INSERT INTO episode (season_id, episode_number, title, description, duration, video_key) VALUES
+-- Breaking Bad (Saison 1)
+(1, 1, 'Chute libre (Pilot)', 'Un professeur de chimie atteint d''un cancer en phase terminale s''associe à un ancien élève pour fabriquer de la méthamphétamine.', 58, 'breaking_bad_s01e01.mp4'),
+(1, 2, 'Le Choix', 'Walter et Jesse doivent se débarrasser des corps de deux trafiquants dans des circonstances désespérées.', 48, 'breaking_bad_s01e02.mp4'),
+(1, 3, 'Dérapage', 'Walter doit prendre une décision capitale concernant la survie d''un prisonnier détenu dans la cave de Jesse.', 48, 'breaking_bad_s01e03.mp4'),
+(1, 4, 'Retour aux sources', 'Walter révèle son diagnostic de cancer à sa famille lors d''un barbecue sous tension.', 48, 'breaking_bad_s01e04.mp4'),
+(1, 5, 'Vivre ou survivre', 'Walter rejette l''aide financière de ses anciens collègues et choisit de continuer son business clandestin.', 48, 'breaking_bad_s01e05.mp4'),
+(1, 6, 'Bluff', 'Walter adopte le pseudonyme Heisenberg et affronte le dangereux baron de la drogue Tuco Salamanca.', 48, 'breaking_bad_s01e06.mp4'),
+(1, 7, 'Le Fruit défendu', 'Walter et Jesse concluent un accord avec Tuco mais découvrent rapidement sa folie meurtrière.', 48, 'breaking_bad_s01e07.mp4'),
+
+-- The Last of Us (Saison 1)
+(3, 1, 'Quand tu es perdu dans l''obscurité', 'Vingt ans après qu''une pandémie a ravagé le monde, Joel, un survivant endurci, est engagé pour faire évader Ellie d''une zone de quarantaine.', 81, 'the_last_of_us_s01e01.mp4'),
+(3, 2, 'Infecté', 'Joel, Tess et Ellie traversent les ruines inondées et infestées de Boston pour atteindre le Capitole.', 53, 'the_last_of_us_s01e02.mp4'),
+(3, 3, 'Long, Long Time', 'L''histoire émouvante de Bill, un survivaliste solitaire, et de Frank, qui trouve refuge dans sa ville fortifiée.', 75, 'the_last_of_us_s01e03.mp4'),
+(3, 4, 'Pied à terre', 'Joel et Ellie sont pris dans une embuscade mortelle à Kansas City tendue par un groupe rebelle impitoyable.', 45, 'the_last_of_us_s01e04.mp4'),
+(3, 5, 'Endurer et survivre', 'Joel et Ellie s''associent aux frères Henry et Sam pour fuir la ville par les tunnels souterrains.', 59, 'the_last_of_us_s01e05.mp4'),
+
+-- Stranger Things (Saison 1)
+(4, 1, 'La Disparition de Will Byers', 'En 1983 à Hawkins, un jeune garçon disparaît mystérieusement tandis qu''une étrange fillette aux pouvoirs télékinétiques apparaît.', 49, 'stranger_things_s01e01.mp4'),
+(4, 2, 'La Barjot de Maple Street', 'Lucas, Mike et Dustin cachent Onze chez Mike, tandis que Joyce reçoit un appel téléphonique angoissant.', 56, 'stranger_things_s01e02.mp4'),
+(4, 3, 'Petit Papa Noël', 'Joyce installe des guirlandes lumineuses pour communiquer avec Will. Hopper découvre des anomalies au laboratoire national.', 52, 'stranger_things_s01e03.mp4'),
+(4, 4, 'Le Corps', 'Refusant de croire que le corps repêché est celui de son fils, Joyce persiste. Onze prouve que Will est toujours vivant.', 51, 'stranger_things_s01e04.mp4'),
+
+-- Chernobyl (Mini-Série)
+(6, 1, '1:23:45', 'Le 26 avril 1986, le réacteur 4 de la centrale de Tchernobyl explose, déclenchant la pire catastrophe nucléaire de l''histoire.', 59, 'chernobyl_ep01.mp4'),
+(6, 2, 'Veuillez garder votre calme', 'Valery Legasov et Boris Shcherbina sont envoyés sur place pour évaluer l''ampleur du désastre et empêcher une seconde déflagration.', 65, 'chernobyl_ep02.mp4'),
+(6, 3, 'Terre ouverte', 'Des mineurs de charbon creusent un tunnel sous le réacteur brûlant au péril de leur vie.', 62, 'chernobyl_ep03.mp4'),
+
+-- Arcane (Saison 1)
+(10, 1, 'Entrez dans la danse', 'Deux sœurs orphelines, Vi et Powder, mènent un cambriolage dans un laboratoire huppé de la haute cité de Piltover.', 43, 'arcane_s01e01.mp4'),
+(10, 2, 'Certains mystères ne devraient pas être percés', 'L''inventeur Jayce risque son avenir pour exploiter la magie Hextech sous l''égide du professeur Heimerdinger.', 41, 'arcane_s01e02.mp4'),
+(10, 3, 'Cette violence crapuleuse nécessaire au changement', 'Silco lance son assaut sur Zaun tandis que Vander tente de sauver sa famille adoptive.', 44, 'arcane_s01e03.mp4');

@@ -2,7 +2,9 @@ package com.cinestream.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,6 +47,9 @@ public class Media {
     @Column(name = "trailer_url", length = 500)
     private String trailerUrl;
 
+    @Column(name = "video_key", length = 255)
+    private String videoKey;
+
     @Column(name = "rental_price_per_day", nullable = false, precision = 8, scale = 2)
     private BigDecimal rentalPricePerDay;
 
@@ -66,6 +71,10 @@ public class Media {
 
     @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<MediaActor> mediaActors = new HashSet<>();
+
+    @OneToMany(mappedBy = "media", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("seasonNumber ASC")
+    private List<Season> seasons = new ArrayList<>();
 
     public Media() {
     }
@@ -158,6 +167,14 @@ public class Media {
         this.trailerUrl = trailerUrl;
     }
 
+    public String getVideoKey() {
+        return videoKey;
+    }
+
+    public void setVideoKey(String videoKey) {
+        this.videoKey = videoKey;
+    }
+
     public BigDecimal getRentalPricePerDay() {
         return rentalPricePerDay;
     }
@@ -188,6 +205,14 @@ public class Media {
 
     public void setMediaActors(Set<MediaActor> mediaActors) {
         this.mediaActors = mediaActors;
+    }
+
+    public List<Season> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(List<Season> seasons) {
+        this.seasons = seasons;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.cinestream.dto;
 
 import com.cinestream.model.MediaType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediaDetailsDto {
@@ -16,33 +17,16 @@ public class MediaDetailsDto {
     private int minimumAge;
     private String posterUrl;
     private String trailerUrl;
+    private String videoKey;
     private BigDecimal rentalPricePerDay;
-    private List<GenreDto> genres;
-    private List<DirectorDto> directors;
-    private List<MediaActorDto> actors;
+    private List<GenreDto> genres = new ArrayList<>();
+    private List<DirectorDto> directors = new ArrayList<>();
+    private List<MediaActorDto> actors = new ArrayList<>();
+    private List<SeasonDto> seasons = new ArrayList<>();
+    private Double ratingAverage;
+    private Long reviewsCount;
 
     public MediaDetailsDto() {
-    }
-
-    public MediaDetailsDto(Long id, String title, String description, int releaseYear, MediaType type,
-                           Integer duration, String language, String country, int minimumAge,
-                           String posterUrl, String trailerUrl, BigDecimal rentalPricePerDay,
-                           List<GenreDto> genres, List<DirectorDto> directors, List<MediaActorDto> actors) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.releaseYear = releaseYear;
-        this.type = type;
-        this.duration = duration;
-        this.language = language;
-        this.country = country;
-        this.minimumAge = minimumAge;
-        this.posterUrl = posterUrl;
-        this.trailerUrl = trailerUrl;
-        this.rentalPricePerDay = rentalPricePerDay;
-        this.genres = genres;
-        this.directors = directors;
-        this.actors = actors;
     }
 
     public Long getId() {
@@ -133,6 +117,14 @@ public class MediaDetailsDto {
         this.trailerUrl = trailerUrl;
     }
 
+    public String getVideoKey() {
+        return videoKey;
+    }
+
+    public void setVideoKey(String videoKey) {
+        this.videoKey = videoKey;
+    }
+
     public BigDecimal getRentalPricePerDay() {
         return rentalPricePerDay;
     }
@@ -163,5 +155,29 @@ public class MediaDetailsDto {
 
     public void setActors(List<MediaActorDto> actors) {
         this.actors = actors;
+    }
+
+    public List<SeasonDto> getSeasons() {
+        return seasons;
+    }
+
+    public void setSeasons(List<SeasonDto> seasons) {
+        this.seasons = seasons;
+    }
+
+    public Double getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public void setRatingAverage(Double ratingAverage) {
+        this.ratingAverage = ratingAverage;
+    }
+
+    public Long getReviewsCount() {
+        return reviewsCount;
+    }
+
+    public void setReviewsCount(Long reviewsCount) {
+        this.reviewsCount = reviewsCount;
     }
 }

@@ -40,13 +40,14 @@ export class CatalogueComponent implements OnInit {
   totalElements: number = 0;
   pageSize: number = 12;
 
-  // Filter model (US009, US011)
+  // Filter model (US009, US011, US015)
   searchQuery: string = '';
   selectedType: string = 'FILM';
   selectedGenreId: number | null = null;
   selectedActorId: number | null = null;
   selectedDirectorId: number | null = null;
   selectedYear: number | null = null;
+  selectedSort: string = 'id,asc';
 
   // Available years for dropdown
   years: number[] = [];
@@ -161,6 +162,8 @@ export class CatalogueComponent implements OnInit {
     this.hasError = false;
     this.cdr.markForCheck();
 
+    const [sortBy, sortDir] = (this.selectedSort || 'id,asc').split(',');
+
     const filters: MediaFilter = {
       q: this.searchQuery.trim() || undefined,
       type: this.selectedType,
@@ -168,6 +171,8 @@ export class CatalogueComponent implements OnInit {
       actor: this.selectedActorId || undefined,
       director: this.selectedDirectorId || undefined,
       year: this.selectedYear || undefined,
+      sortBy: sortBy,
+      sortDir: sortDir,
       page: this.currentPage,
       size: this.pageSize
     };
@@ -197,6 +202,11 @@ export class CatalogueComponent implements OnInit {
   }
 
   onFilterChange(): void {
+    this.currentPage = 0;
+    this.fetchMedia();
+  }
+
+  onSortChange(): void {
     this.currentPage = 0;
     this.fetchMedia();
   }

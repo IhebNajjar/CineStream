@@ -1,0 +1,31 @@
+<div class="favorites-container">
+  <div class="favorites-header">
+    <h1 class="page-title">Mes Favoris</h1>
+    <p class="page-subtitle">Retrouvez tous les films et séries que vous avez sauvegardés.</p>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement de vos favoris...</p>
+  </div>
+
+  <div *ngIf="!loading()">
+    <div *ngIf="favorites().length === 0" class="empty-state">
+      <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+      </svg>
+      <h3>Aucun favori pour le moment</h3>
+      <p>Cliquez sur l'icône cœur sur les affiches ou les fiches de détails pour ajouter des titres à votre liste.</p>
+      <a routerLink="/films" class="btn-primary">Explorer le catalogue</a>
+    </div>
+
+    <div *ngIf="favorites().length > 0" class="favorites-grid">
+      <div *ngFor="let fav of favorites()" class="favorite-item">
+        <app-media-card [media]="fav.media"></app-media-card>
+        <button class="btn-remove-fav" (click)="removeFavorite(fav.mediaId)" title="Retirer des favoris">
+          &times; Retirer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

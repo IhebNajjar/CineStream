@@ -1,7 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Actor, Director, Genre, MediaDetails, MediaFilter, MediaSummary, PagedResponse } from '../models/media.model';
+import {
+  Actor,
+  ActorDetails,
+  Director,
+  DirectorDetails,
+  Genre,
+  MediaDetails,
+  MediaFilter,
+  MediaSummary,
+  PagedResponse
+} from '../models/media.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +41,12 @@ export class MediaService {
     if (filters.year !== undefined && filters.year !== null && filters.year > 0) {
       params = params.set('year', filters.year.toString());
     }
+    if (filters.sortBy) {
+      params = params.set('sortBy', filters.sortBy);
+    }
+    if (filters.sortDir) {
+      params = params.set('sortDir', filters.sortDir);
+    }
     if (filters.page !== undefined && filters.page !== null) {
       params = params.set('page', filters.page.toString());
     }
@@ -55,7 +71,15 @@ export class MediaService {
     return this.http.get<Actor[]>(`${this.apiUrl}/actors`);
   }
 
+  getActor(id: number): Observable<ActorDetails> {
+    return this.http.get<ActorDetails>(`${this.apiUrl}/actors/${id}`);
+  }
+
   getDirectors(): Observable<Director[]> {
     return this.http.get<Director[]>(`${this.apiUrl}/directors`);
+  }
+
+  getDirector(id: number): Observable<DirectorDetails> {
+    return this.http.get<DirectorDetails>(`${this.apiUrl}/directors/${id}`);
   }
 }

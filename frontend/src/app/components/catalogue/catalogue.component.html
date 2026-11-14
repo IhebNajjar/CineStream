@@ -166,6 +166,29 @@
                 </svg>
               </span>
             </div>
+
+            <!-- Sort: US015 -->
+            <div class="custom-select-wrap select-sort">
+              <label for="filter-sort" class="visually-hidden">Trier par</label>
+              <select 
+                id="filter-sort" 
+                class="custom-select" 
+                [(ngModel)]="selectedSort" 
+                (ngModelChange)="onSortChange()">
+                <option value="id,asc">Tri : Par défaut</option>
+                <option value="title,asc">Titre (A à Z)</option>
+                <option value="title,desc">Titre (Z à A)</option>
+                <option value="year,desc">Année (Plus récents)</option>
+                <option value="year,asc">Année (Plus anciens)</option>
+                <option value="price,asc">Tarif (Croissant)</option>
+                <option value="price,desc">Tarif (Décroissant)</option>
+              </select>
+              <span class="select-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </span>
+            </div>
           </div>
         </div>
 

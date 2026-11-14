@@ -1,0 +1,277 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <div>
+      <div class="admin-badge">Zone Réservée</div>
+      <h1 class="page-title">Tableau de Bord Administration</h1>
+      <p class="page-subtitle">Gestion intégrale du catalogue, tarification, streaming Cloudflare R2 et métriques.</p>
+    </div>
+
+    <button class="btn-primary" (click)="openCreateMediaModal()">
+      + Ajouter un Média
+    </button>
+  </div>
+
+  <!-- Notification Banner -->
+  <div *ngIf="message()" [class]="'alert-' + message()?.type">
+    {{ message()?.text }}
+    <button class="alert-dismiss" (click)="message.set(null)">&times;</button>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="admin-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'stats'" (click)="activeTab.set('stats')">
+      Statistiques Globales (US036)
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'media'" (click)="activeTab.set('media')">
+      Gestion des Médias (US032, US033)
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'genres'" (click)="activeTab.set('genres')">
+      Genres (US035)
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'people'" (click)="activeTab.set('people')">
+      Acteurs & Réalisateurs (US035)
+    </button>
+  </div>
+
+  <!-- TAB 1: Dashboard Stats (US036) -->
+  <div *ngIf="activeTab() === 'stats'" class="tab-content">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Total Médias</span>
+        <div class="stat-value">{{ stats()?.totalMedia || 0 }}</div>
+        <div class="stat-sub">{{ stats()?.moviesCount }} films • {{ stats()?.seriesCount }} séries</div>
+      </div>
+
+      <div class="stat-card stat-accent">
+        <span class="stat-label">Revenu Total Généré</span>
+        <div class="stat-value">{{ (stats()?.totalRevenue || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}</div>
+        <div class="stat-sub">{{ stats()?.activeRentalsCount }} locations actives</div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Utilisateurs Enregistrés</span>
+        <div class="stat-value">{{ stats()?.usersCount || 0 }}</div>
+        <div class="stat-sub">Comptes actifs</div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Talents Référencés</span>
+        <div class="stat-value">{{ (stats()?.actorsCount || 0) + (stats()?.directorsCount || 0) }}</div>
+        <div class="stat-sub">{{ stats()?.actorsCount }} acteurs • {{ stats()?.directorsCount }} réalisateurs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Media Management Table (US032, US033) -->
+  <div *ngIf="activeTab() === 'media'" class="tab-content">
+    <div class="table-card">
+      <div class="table-header-bar">
+        <h3>Catalogue ({{ mediaList().length }} titres)</h3>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Affiche</th>
+              <th>Titre</th>
+              <th>Format</th>
+              <th>Année</th>
+              <th>Tarif/jour</th>
+              <th>Clé Vidéo R2</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of mediaList()">
+              <td>
+                <img [src]="m.posterUrl || '/assets/posters/1.jpg'" class="media-thumb" [alt]="m.title" />
+              </td>
+              <td>
+                <span class="title-bold">{{ m.title }}</span>
+              </td>
+              <td>
+                <span class="type-pill" [class.type-serie]="m.type === 'SERIE'">
+                  {{ m.type }}
+                </span>
+              </td>
+              <td>{{ m.releaseYear }}</td>
+              <td class="price-cell">{{ m.rentalPricePerDay | currency:'EUR':'symbol':'1.2-2':'fr' }}</td>
+              <td>
+                <span class="video-key-code">{{ m.videoKey || 'non définie' }}</span>
+              </td>
+              <td class="text-right actions-cell">
+                <a [routerLink]="['/media', m.id]" class="btn-table-view">Voir</a>
+                <button class="btn-table-edit" (click)="openEditMediaModal(m)">Modifier</button>
+                <button class="btn-table-del" (click)="onDeleteMedia(m.id)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Genres Management (US035) -->
+  <div *ngIf="activeTab() === 'genres'" class="tab-content">
+    <div class="simple-crud-card">
+      <div class="add-inline-form">
+        <input
+          type="text"
+          [(ngModel)]="newGenreName"
+          placeholder="Nouveau nom de genre (ex: Documentaire)"
+          class="crud-input"
+        />
+        <button class="btn-primary" (click)="onAddGenre()">Ajouter le Genre</button>
+      </div>
+
+      <div class="chips-list">
+        <div *ngFor="let g of genres()" class="genre-chip">
+          <span>{{ g.name }}</span>
+          <button class="btn-chip-del" (click)="onDeleteGenre(g.id)">&times;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Actors & Directors Management (US035) -->
+  <div *ngIf="activeTab() === 'people'" class="tab-content">
+    <div class="people-split">
+      <!-- Actors -->
+      <div class="simple-crud-card">
+        <h3>Acteurs ({{ actors().length }})</h3>
+        <div class="add-inline-form">
+          <input
+            type="text"
+            [(ngModel)]="newActorName"
+            placeholder="Nom de l'acteur"
+            class="crud-input"
+          />
+          <button class="btn-primary" (click)="onAddActor()">Ajouter</button>
+        </div>
+        <div class="people-list">
+          <div *ngFor="let a of actors()" class="person-row">
+            <img [src]="a.photoUrl || '/assets/people/actor_1.jpg'" class="person-thumb" />
+            <span class="person-name">{{ a.name }}</span>
+            <button class="btn-table-del" (click)="onDeleteActor(a.id)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Directors -->
+      <div class="simple-crud-card">
+        <h3>Réalisateurs ({{ directors().length }})</h3>
+        <div class="add-inline-form">
+          <input
+            type="text"
+            [(ngModel)]="newDirectorName"
+            placeholder="Nom du réalisateur"
+            class="crud-input"
+          />
+          <button class="btn-primary" (click)="onAddDirector()">Ajouter</button>
+        </div>
+        <div class="people-list">
+          <div *ngFor="let d of directors()" class="person-row">
+            <img [src]="d.photoUrl || '/assets/people/director_1.jpg'" class="person-thumb" />
+            <span class="person-name">{{ d.name }}</span>
+            <button class="btn-table-del" (click)="onDeleteDirector(d.id)">Supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Media Create / Edit (US032, US033, US037) -->
+  <div *ngIf="showMediaModal()" class="modal-backdrop" (click)="showMediaModal.set(false)">
+    <div class="modal-card-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingMediaId() ? 'Modifier le Média' : 'Ajouter un Nouveau Média' }}</h2>
+        <button class="btn-close" (click)="showMediaModal.set(false)">&times;</button>
+      </div>
+
+      <form (ngSubmit)="onSaveMedia()" class="media-modal-form">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Titre *</label>
+            <input type="text" [(ngModel)]="mediaForm.title" name="title" required class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label>Format *</label>
+            <select [(ngModel)]="mediaForm.type" name="type" class="form-input">
+              <option value="FILM">Film</option>
+              <option value="SERIE">Série</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Synopsis</label>
+          <textarea [(ngModel)]="mediaForm.description" name="description" rows="3" class="form-input"></textarea>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>Année de sortie *</label>
+            <input type="number" [(ngModel)]="mediaForm.releaseYear" name="releaseYear" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Durée (min)</label>
+            <input type="number" [(ngModel)]="mediaForm.duration" name="duration" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Âge minimum</label>
+            <input type="number" [(ngModel)]="mediaForm.minimumAge" name="minimumAge" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>Tarif par jour (€) *</label>
+            <input type="number" step="0.01" [(ngModel)]="mediaForm.rentalPricePerDay" name="rentalPricePerDay" required class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Clé Vidéo R2 (videoKey) *</label>
+            <input type="text" [(ngModel)]="mediaForm.videoKey" name="videoKey" placeholder="ex: movie_demo.mp4" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Langue</label>
+            <input type="text" [(ngModel)]="mediaForm.language" name="language" class="form-input" />
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>URL de l'affiche (Poster)</label>
+            <input type="text" [(ngModel)]="mediaForm.posterUrl" name="posterUrl" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label>Lien Bande-Annonce (YouTube)</label>
+            <input type="text" [(ngModel)]="mediaForm.trailerUrl" name="trailerUrl" class="form-input" />
+          </div>
+        </div>
+
+        <!-- Multi-select Genres -->
+        <div class="form-group">
+          <label>Genres associés :</label>
+          <div class="selector-chips">
+            <button
+              type="button"
+              *ngFor="let g of genres()"
+              class="selector-chip"
+              [class.active]="mediaForm.genreIds.includes(g.id)"
+              (click)="toggleGenreSelection(g.id)"
+            >
+              {{ g.name }}
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="showMediaModal.set(false)">Annuler</button>
+          <button type="submit" class="btn-primary">Enregistrer le média</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

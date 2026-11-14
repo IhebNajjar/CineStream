@@ -1,18 +1,15 @@
 package com.cinestream.controller;
 
+import com.cinestream.dto.ActorDetailsDto;
 import com.cinestream.dto.ActorDto;
 import com.cinestream.service.ActorService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/actors")
-@CrossOrigin(origins = "*")
 public class ActorController {
 
     private final ActorService actorService;
@@ -24,5 +21,10 @@ public class ActorController {
     @GetMapping
     public ResponseEntity<List<ActorDto>> getAllActors() {
         return ResponseEntity.ok(actorService.getAllActors());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ActorDetailsDto> getActorDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(actorService.getActorDetails(id));
     }
 }

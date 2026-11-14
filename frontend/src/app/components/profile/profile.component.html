@@ -1,0 +1,164 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <div class="user-avatar-lg">
+      <svg fill="currentColor" viewBox="0 0 24 24" class="avatar-icon">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      </svg>
+    </div>
+    <div class="user-meta">
+      <div class="role-pill">{{ authService.currentUser()?.role === 'ADMIN' ? 'ADMINISTRATEUR' : 'UTILISATEUR' }}</div>
+      <h1 class="user-email-title">{{ authService.currentUser()?.email }}</h1>
+      <p class="user-id-sub">Identifiant client CineStream #{{ authService.currentUser()?.id }}</p>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <!-- Section 1: Wallet & Topup (US020, US021) -->
+    <div class="profile-card wallet-card">
+      <div class="card-header">
+        <h2 class="card-title">Portefeuille Virtuel</h2>
+        <span class="wallet-badge">Actif</span>
+      </div>
+
+      <div class="balance-display">
+        <span class="balance-label">Solde disponible</span>
+        <div class="balance-amount">{{ (wallet()?.balance || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}</div>
+      </div>
+
+      <div *ngIf="topupSuccess()" class="alert-success">{{ topupSuccess() }}</div>
+      <div *ngIf="topupError()" class="alert-error">{{ topupError() }}</div>
+
+      <form (ngSubmit)="onTopUp()" class="topup-form">
+        <label class="input-label">Recharger le solde (max 500 €)</label>
+        <div class="amount-presets">
+          <button type="button" (click)="topupAmount = 10" [class.active]="topupAmount === 10" class="btn-preset">+10 €</button>
+          <button type="button" (click)="topupAmount = 25" [class.active]="topupAmount === 25" class="btn-preset">+25 €</button>
+          <button type="button" (click)="topupAmount = 50" [class.active]="topupAmount === 50" class="btn-preset">+50 €</button>
+          <button type="button" (click)="topupAmount = 100" [class.active]="topupAmount === 100" class="btn-preset">+100 €</button>
+        </div>
+
+        <div class="input-group-topup">
+          <input
+            type="number"
+            [(ngModel)]="topupAmount"
+            name="topupAmount"
+            min="1"
+            max="500"
+            step="1"
+            class="topup-input"
+            required
+          />
+          <button type="submit" [disabled]="topupLoading()" class="btn-topup">
+            <span *ngIf="!topupLoading()">Recharger</span>
+            <span *ngIf="topupLoading()">...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Section 2: Account Settings (US005, US006) -->
+    <div class="profile-card">
+      <div class="card-header">
+        <h2 class="card-title">Paramètres du Compte</h2>
+      </div>
+
+      <!-- Update Email (US005) -->
+      <form (ngSubmit)="onUpdateEmail()" class="sub-form">
+        <h3 class="form-sub-title">Modifier l'adresse email</h3>
+        <div *ngIf="emailSuccess()" class="alert-success">{{ emailSuccess() }}</div>
+        <div *ngIf="emailError()" class="alert-error">{{ emailError() }}</div>
+
+        <div class="field-row">
+          <input
+            type="email"
+            [(ngModel)]="newEmail"
+            name="newEmail"
+            class="profile-input"
+            required
+          />
+          <button type="submit" [disabled]="emailLoading()" class="btn-save">
+            {{ emailLoading() ? '...' : 'Enregistrer' }}
+          </button>
+        </div>
+      </form>
+
+      <hr class="card-divider" />
+
+      <!-- Change Password (US006) -->
+      <form (ngSubmit)="onChangePassword()" class="sub-form">
+        <h3 class="form-sub-title">Changer le mot de passe</h3>
+        <div *ngIf="passwordSuccess()" class="alert-success">{{ passwordSuccess() }}</div>
+        <div *ngIf="passwordError()" class="alert-error">{{ passwordError() }}</div>
+
+        <div class="field-col">
+          <input
+            type="password"
+            [(ngModel)]="currentPassword"
+            name="currentPassword"
+            placeholder="Mot de passe actuel"
+            class="profile-input"
+            required
+          />
+          <input
+            type="password"
+            [(ngModel)]="newPassword"
+            name="newPassword"
+            placeholder="Nouveau mot de passe (min 6 car.)"
+            class="profile-input"
+            required
+          />
+          <input
+            type="password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            placeholder="Confirmer nouveau mot de passe"
+            class="profile-input"
+            required
+          />
+          <button type="submit" [disabled]="passwordLoading()" class="btn-save btn-block">
+            {{ passwordLoading() ? 'Modification...' : 'Modifier le mot de passe' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Section 3: Transactions History (US022) -->
+  <div class="transactions-section">
+    <div class="section-title-wrap">
+      <h2 class="section-title">Historique des Transactions</h2>
+      <span class="count-pill">{{ transactions().length }} opérations</span>
+    </div>
+
+    <div *ngIf="transactions().length === 0" class="empty-txs">
+      <p>Aucune transaction enregistrée pour le moment.</p>
+    </div>
+
+    <div *ngIf="transactions().length > 0" class="tx-table-wrapper">
+      <table class="tx-table">
+        <thead>
+          <tr>
+            <th>Date & Heure</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th class="text-right">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions()">
+            <td>{{ tx.createdAt | date:'short':'':'fr' }}</td>
+            <td>
+              <span class="tx-type-pill" [class.pill-recharge]="tx.type === 'RECHARGE'" [class.pill-location]="tx.type === 'LOCATION'">
+                {{ tx.type === 'RECHARGE' ? 'Recharge' : 'Location' }}
+              </span>
+            </td>
+            <td>{{ tx.description || 'Opération' }}</td>
+            <td class="text-right tx-amount" [class.amount-pos]="tx.amount > 0" [class.amount-neg]="tx.amount < 0">
+              {{ (tx.amount > 0 ? '+' : '') + (tx.amount | currency:'EUR':'symbol':'1.2-2':'fr') }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

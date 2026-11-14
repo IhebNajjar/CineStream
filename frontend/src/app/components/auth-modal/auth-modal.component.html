@@ -1,0 +1,80 @@
+<div class="modal-backdrop" (click)="close.emit()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <button class="btn-close" (click)="close.emit()">&times;</button>
+
+    <div class="modal-header">
+      <div class="brand-logo">
+        <span class="logo-cine">Cine</span><span class="logo-stream">Stream</span>
+      </div>
+      <h2 class="modal-title">{{ isRegister() ? 'Créer un compte' : 'Connexion' }}</h2>
+      <p class="modal-subtitle">
+        {{ isRegister() ? 'Rejoignez CineStream et profitez de votre portefeuille virtuel.' : 'Accédez à votre catalogue et vos locations.' }}
+      </p>
+    </div>
+
+    <!-- Alert messages -->
+    <div *ngIf="errorMessage()" class="alert-error">
+      {{ errorMessage() }}
+    </div>
+    <div *ngIf="successMessage()" class="alert-success">
+      {{ successMessage() }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="email">Adresse email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="ex: nom@domaine.com"
+          required
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          class="form-input"
+        />
+      </div>
+
+      <div *ngIf="isRegister()" class="form-group">
+        <label for="confirmPassword">Confirmer le mot de passe</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="••••••••"
+          required
+          class="form-input"
+        />
+      </div>
+
+      <button type="submit" [disabled]="loading()" class="btn-submit">
+        <span *ngIf="!loading()">{{ isRegister() ? 'S\'inscrire' : 'Se connecter' }}</span>
+        <span *ngIf="loading()">Traitement en cours...</span>
+      </button>
+    </form>
+
+    <div class="modal-footer">
+      <p *ngIf="!isRegister()">
+        Pas encore de compte ?
+        <button type="button" (click)="toggleMode()" class="btn-switch">Créer un compte</button>
+      </p>
+      <p *ngIf="isRegister()">
+        Vous avez déjà un compte ?
+        <button type="button" (click)="toggleMode()" class="btn-switch">Se connecter</button>
+      </p>
+    </div>
+  </div>
+</div>
