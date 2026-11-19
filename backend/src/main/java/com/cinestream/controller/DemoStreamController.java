@@ -19,10 +19,19 @@ public class DemoStreamController {
      */
     @GetMapping("/demo/{videoKey}")
     public ResponseEntity<Void> streamDemoVideo(@PathVariable String videoKey) {
+        String lower = videoKey.toLowerCase();
         String streamUrl;
-        if (videoKey.contains("breaking_bad") || videoKey.contains("chernobyl")) {
+        if (lower.contains("sintel")) {
+            streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
+        } else if (lower.contains("tears_of_steel") || lower.contains("tears-of-steel") || lower.contains("tearsofsteel")) {
             streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
-        } else if (videoKey.contains("interstellar") || videoKey.contains("dark_knight")) {
+        } else if (lower.contains("charge") || lower.contains("elephant")) {
+            streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+        } else if (lower.contains("sprite") || lower.contains("bunny")) {
+            streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+        } else if (lower.contains("breaking_bad") || lower.contains("chernobyl")) {
+            streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+        } else if (lower.contains("interstellar") || lower.contains("dark_knight")) {
             streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4";
         } else {
             streamUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";

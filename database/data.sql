@@ -218,3 +218,48 @@ INSERT INTO episode (season_id, episode_number, title, description, duration, vi
 (10, 1, 'Entrez dans la danse', 'Deux sœurs orphelines, Vi et Powder, mènent un cambriolage dans un laboratoire huppé de la haute cité de Piltover.', 43, 'arcane_s01e01.mp4'),
 (10, 2, 'Certains mystères ne devraient pas être percés', 'L''inventeur Jayce risque son avenir pour exploiter la magie Hextech sous l''égide du professeur Heimerdinger.', 41, 'arcane_s01e02.mp4'),
 (10, 3, 'Cette violence crapuleuse nécessaire au changement', 'Silco lance son assaut sur Zaun tandis que Vander tente de sauver sa famille adoptive.', 44, 'arcane_s01e03.mp4');
+
+-- -------------------------------------------------------------
+-- Blender Foundation Open Movies (Charge, Sintel, Sprite Fright, Tears of Steel)
+-- -------------------------------------------------------------
+INSERT INTO director (id, name, bio, photo_url) VALUES
+(11, 'Hjalti Hjalmarsson', 'Animateur et réalisateur islandais au sein du Blender Studio, réalisateur du court-métrage Charge.', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400'),
+(12, 'Colin Levy', 'Réalisateur et artiste VFX américain, ancien de Pixar et réalisateur du film Sintel pour la Blender Foundation.', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'),
+(13, 'Matthew Luhn', 'Scénariste et animateur américain ayant travaillé chez Pixar, réalisateur de Sprite Fright.', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400'),
+(14, 'Ian Hubert', 'Cinéaste et maître des effets visuels open source, réalisateur de Tears of Steel.', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400')
+ON DUPLICATE KEY UPDATE name=name;
+
+INSERT INTO actor (id, name, bio, birth_date, photo_url) VALUES
+(19, 'Halina Reijn', 'Actrice et réalisatrice néerlandaise, voix originale de Sintel.', '1975-11-10', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400'),
+(20, 'Thom Hoffman', 'Acteur et photographe néerlandais, voix du Chaman dans Sintel.', '1957-03-03', 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400'),
+(21, 'Derek de Lint', 'Acteur néerlandais célèbre, rôle de Old Thom dans Tears of Steel.', '1948-07-17', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400'),
+(22, 'Vanache', 'Actrice et modèle, rôle de Celia dans Tears of Steel.', '1988-05-22', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400')
+ON DUPLICATE KEY UPDATE name=name;
+
+INSERT INTO media (id, title, description, release_year, type, duration, language, country, minimum_age, poster_url, trailer_url, video_key, rental_price_per_day) VALUES
+(33, 'Charge', 'Dans un atelier désolé de robotique cyberpunk, un vieil ouvrier tente d''extraire l''ultime batterie d''un robot hors d''état pour recharger son propre coeur cybernétique avant l''arrivée d''une patrouille mortelle.', 2022, 'FILM', 4, 'English', 'Netherlands', 0, 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=80', 'https://www.youtube.com/watch?v=eRSG_K900g8', 'charge.mp4', 1.49),
+(34, 'Sintel', 'Une jeune femme solitaire nommée Sintel recueille et soigne un bébé dragon blessé nommé Scales. Lorsqu''un dragon adulte l''enlève, elle entreprend un périple tragique pour le retrouver.', 2010, 'FILM', 15, 'English', 'Netherlands', 0, 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Sintel_poster.jpg/440px-Sintel_poster.jpg', 'https://www.youtube.com/watch?v=eRsGyueVLvQ', 'sintel.mp4', 1.99),
+(35, 'Sprite Fright', 'Comédie horrifique : des adolescents turbulents font une excursion dans une forêt isolée d''Angleterre et font la rencontre de créatures féeriques carnivores.', 2021, 'FILM', 10, 'English', 'Netherlands', 15, 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Sprite_Fright_-_Poster.png/440px-Sprite_Fright_-_Poster.png', 'https://www.youtube.com/watch?v=_cMxraX_5RE', 'sprite_fright.mp4', 2.49),
+(36, 'Tears of Steel', 'Dans un futur dystopique à Amsterdam, un groupe de résistants tente de reprogrammer un souvenir du passé pour convaincre Celia, devenue cyborg destructrice, d''arrêter ses robots géants.', 2012, 'FILM', 12, 'English', 'Netherlands', 12, 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Tears_of_Steel_poster.jpg/440px-Tears_of_Steel_poster.jpg', 'https://www.youtube.com/watch?v=R6MlUcmOul8', 'tears_of_steel.mp4', 1.99)
+ON DUPLICATE KEY UPDATE title=title;
+
+INSERT INTO media_director (media_id, director_id) VALUES
+(33, 11),
+(34, 12),
+(35, 13),
+(36, 14)
+ON DUPLICATE KEY UPDATE director_id=director_id;
+
+INSERT INTO media_actor (media_id, actor_id, character_name) VALUES
+(34, 19, 'Sintel (voix)'),
+(34, 20, 'Le Chaman (voix)'),
+(36, 21, 'Old Thom'),
+(36, 22, 'Celia')
+ON DUPLICATE KEY UPDATE character_name=VALUES(character_name);
+
+INSERT INTO media_genre (media_id, genre_id) VALUES
+(33, 2), (33, 1), (33, 7),
+(34, 7), (34, 6), (34, 3), (34, 8),
+(35, 7), (35, 4), (35, 5),
+(36, 2), (36, 1)
+ON DUPLICATE KEY UPDATE genre_id=genre_id;
