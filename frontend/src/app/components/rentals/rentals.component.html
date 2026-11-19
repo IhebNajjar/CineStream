@@ -5,22 +5,38 @@
       <p class="page-subtitle">Accédez à vos films et séries loués et visionnez-les en haute définition.</p>
     </div>
 
-    <!-- Tabs switcher -->
-    <div class="tabs-switcher">
-      <button
-        class="tab-btn"
-        [class.active]="activeTab() === 'active'"
-        (click)="activeTab.set('active')"
-      >
-        En cours ({{ getActiveRentals().length }})
-      </button>
-      <button
-        class="tab-btn"
-        [class.active]="activeTab() === 'history'"
-        (click)="activeTab.set('history')"
-      >
-        Historique ({{ getExpiredRentals().length }})
-      </button>
+    <div class="header-right">
+      <!-- Wallet summary card -->
+      <a routerLink="/profile" class="rentals-wallet-card" title="Gérer le portefeuille et recharger">
+        <div class="wallet-card-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+        </div>
+        <div class="wallet-card-info">
+          <span class="wallet-card-lbl">Mon Solde</span>
+          <span class="wallet-card-val">{{ (walletService.wallet()?.balance || 0) | currency:'EUR':'symbol':'1.2-2':'fr' }}</span>
+        </div>
+        <span class="wallet-card-plus">+</span>
+      </a>
+
+      <!-- Tabs switcher -->
+      <div class="tabs-switcher">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'active'"
+          (click)="activeTab.set('active')"
+        >
+          En cours ({{ getActiveRentals().length }})
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'history'"
+          (click)="activeTab.set('history')"
+        >
+          Historique ({{ getExpiredRentals().length }})
+        </button>
+      </div>
     </div>
   </div>
 

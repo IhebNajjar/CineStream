@@ -22,7 +22,7 @@ export class NavbarComponent implements OnInit {
   authModalRegisterMode = signal(false);
   showUserDropdown = signal(false);
 
-  wallet = signal<Wallet | null>(null);
+  wallet = this.walletService.wallet;
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -32,15 +32,12 @@ export class NavbarComponent implements OnInit {
     });
 
     if (this.authService.isLoggedIn()) {
-      this.loadBalance();
+      this.walletService.refreshWallet();
     }
   }
 
   loadBalance(): void {
-    this.walletService.getWallet().subscribe({
-      next: (w) => this.wallet.set(w),
-      error: () => {}
-    });
+    this.walletService.refreshWallet();
   }
 
   openLogin(): void {

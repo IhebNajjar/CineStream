@@ -114,6 +114,7 @@ public class RentalService {
      * Generates a presigned Cloudflare R2 / S3 watch link valid for a few hours
      * (never longer than remaining rental time). Link is never stored in DB.
      */
+    @Transactional(readOnly = true)
     public WatchLinkResponse getWatchLink(User user, Long rentalId) {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Location non trouvée: " + rentalId));

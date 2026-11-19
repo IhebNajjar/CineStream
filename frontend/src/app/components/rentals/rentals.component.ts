@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RentalService } from '../../services/rental.service';
+import { WalletService } from '../../services/wallet.service';
 import { Rental, WatchLinkResponse } from '../../models/media.model';
 
 @Component({
@@ -13,6 +14,7 @@ import { Rental, WatchLinkResponse } from '../../models/media.model';
 })
 export class RentalsComponent implements OnInit {
   private rentalService = inject(RentalService);
+  walletService = inject(WalletService);
 
   rentals = signal<Rental[]>([]);
   activeTab = signal<'active' | 'history'>('active');
